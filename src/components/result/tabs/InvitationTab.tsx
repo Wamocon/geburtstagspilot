@@ -3,6 +3,8 @@
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import type { InvitationTemplate, Theme, WizardData, GuestEntry, InvitationStyle } from "@/types";
+import { AiGenerateButton } from "@/components/ai/AiGenerateButton";
+import { AiContentBadge } from "@/components/ai/AiContentBadge";
 
 interface InvitationTabProps {
   invitation: InvitationTemplate | null;
@@ -27,6 +29,17 @@ const BG_IMAGES = [
   { key: "stars", label: "⭐", url: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&q=80" },
 ];
 
+function isColorDark(hex: string): boolean {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return false;
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  // Relative luminance formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance < 0.5;
+}
+
 export function InvitationTab({ invitation, theme, wizard, guests, locale }: InvitationTabProps) {
   const t = useTranslations("result");
   const invRef = useRef<HTMLDivElement>(null);
@@ -46,6 +59,11 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
   const [customText, setCustomText] = useState("");
   const [editingText, setEditingText] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<string>("");
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiStyle, setAiStyle] = useState<"funny" | "classic" | "creative">("funny");
+  const [customTextColor, setCustomTextColor] = useState<string>("");
+
+  const ta = useTranslations("ai");
 
   const updateField = useCallback((key: string, value: string) => {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -91,6 +109,10 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
     { key: "bringNote", type: "text" },
   ] as const;
 
+  // Determine if the background is dark for text contrast
+  const bgColor = selectedBg ? "transparent" : (invitation.bg_color || "#ffffff");
+  const isDarkBg = selectedBg || isColorDark(bgColor);
+  const textColor = isDarkBg ? "#ffffff" : "#1a1a1a";
   const styleConfig = INVITATION_STYLES.find((s) => s.key === selectedStyle);
 
   return (
@@ -135,6 +157,31 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
             >
               {bg.label}
             </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Text Color Picker */}
+      <div>
+        <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+          🎨 {locale === "de" ? "Textfarbe" : "Text Color"}
+        </h3>
+        <div className="flex gap-2">
+          {[
+            { color: "#ffffff", label: "Weiss" },
+            { color: "#1a1a1a", label: "Schwarz" },
+            { color: "#7C3AED", label: "Lila" },
+            { color: "#F59E0B", label: "Gold" },
+          ].map((opt) => (
+            <button
+              key={opt.color}
+              onClick={() => setCustomTextColor(opt.color)}
+              className={`w-8 h-8 rounded-full border-2 transition-all ${
+                customTextColor === opt.color ? "ring-2 ring-party-purple scale-110" : "border-zinc-300 dark:border-zinc-600"
+              }`}
+              style={{ backgroundColor: opt.color }}
+              title={opt.label}
+            />
           ))}
         </div>
       </div>
@@ -212,6 +259,69 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
               />
             )}
           </div>
+
+          {/* AI Invitation Text Generator */}
+          <div className="mt-4 p-4 rounded-xl border border-party-purple/20 bg-party-purple/5 dark:bg-party-purple/10">
+            <div className="flex items-center gap-2 mb-3">
+              <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                ✨ {ta("aiInvitation")}
+              </h4>
+            </div>
+            <div className="flex gap-2 mb-3">
+              {(["funny", "classic", "creative"] as const).map((style) => (
+                <button
+                  key={style}
+                  onClick={() => setAiStyle(style)}
+                  className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
+                    aiStyle === style
+                      ? "bg-party-purple text-white"
+                      : "bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300"
+                  }`}
+                >
+                  {ta(`style_${style}`)}
+                </button>
+              ))}
+            </div>
+            <AiGenerateButton
+              feature="ai_invitation_text"
+              onClick={async () => {
+                setAiGenerating(true);
+                try {
+                  const themeName = locale === "de" ? (invitation?.name_de ?? "") : (invitation?.name_en ?? "");
+                  const response = await fetch("/api/ai/generate-invitation", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      locale,
+                      childName: wizard.birthdayChildName || "",
+                      age: wizard.age,
+                      themeName,
+                      style: aiStyle,
+                    }),
+                  });
+                  if (response.ok) {
+                    const data = await response.json();
+                    if (data.text) {
+                      setCustomText(data.text);
+                      setEditingText(false);
+                    }
+                  }
+                } catch {
+                  // silently fail
+                } finally {
+                  setAiGenerating(false);
+                }
+              }}
+              loading={aiGenerating}
+              label={ta("generateInvitation")}
+              icon="✉️"
+            />
+            {customText && customText !== (locale === "de" ? invitation?.template_text_de : invitation?.template_text_en) && (
+              <div className="mt-2">
+                <AiContentBadge />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Preview */}
@@ -225,7 +335,7 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
             style={{
               backgroundColor: selectedBg ? "transparent" : invitation.bg_color,
               borderColor: invitation.accent_color,
-              color: "#1a1a1a",
+              color: customTextColor || textColor,
             }}
           >
             {/* Background Image */}
@@ -273,7 +383,7 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
 
                   // Draw text content
                   ctx.setLineDash([]);
-                  ctx.fillStyle = "#1a1a1a";
+                  ctx.fillStyle = customTextColor || textColor;
                   ctx.textAlign = "center";
                   const centerX = el.offsetWidth / 2;
 

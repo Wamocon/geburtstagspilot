@@ -190,3 +190,57 @@ export interface ShoppingItem {
 }
 
 export type Locale = 'de' | 'en';
+
+// Auth & Profile Types
+export type UserRole = 'user' | 'admin';
+export type UserTier = 'free' | 'pro';
+
+export interface Profile {
+  id: string;
+  email: string;
+  display_name: string;
+  role: UserRole;
+  tier: UserTier;
+  plan_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavedPlan {
+  id: string;
+  user_id: string;
+  title: string;
+  wizard_data: WizardData;
+  plan_data: PartyPlan;
+  is_shared: boolean;
+  share_token: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export const TIER_LIMITS: Record<UserTier, { maxPlans: number; features: string[] }> = {
+  free: {
+    maxPlans: 3,
+    features: ['basic_plan', 'guest_list', 'shopping_list'],
+  },
+  pro: {
+    maxPlans: 50,
+    features: [
+      'basic_plan',
+      'guest_list',
+      'shopping_list',
+      'collaboration',
+      'rsvp_tracking',
+      'ai_personalization',
+      'ai_chat',
+      'ai_game_generation',
+      'ai_invitation_text',
+      'task_manager',
+      'child_profiles',
+      'budget_tracker',
+      'premium_themes',
+      'unlimited_plans',
+      'persistent_share_links',
+    ],
+  },
+};

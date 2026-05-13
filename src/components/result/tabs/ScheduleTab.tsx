@@ -80,19 +80,40 @@ export function ScheduleTab({ schedule, startTime, onTimeChange, onUpdateSchedul
     setShowAddForm(false);
   }
 
+  const totalMinutes = schedule.reduce((sum, item) => sum + item.duration, 0);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalRemainingMins = totalMinutes % 60;
+
+  // Calculate end time
+  const [startH, startM] = startTime.split(":").map(Number);
+  const endMinutes = startH * 60 + startM + totalMinutes;
+  const endH = Math.floor(endMinutes / 60) % 24;
+  const endM = endMinutes % 60;
+  const endTimeStr = `${endH.toString().padStart(2, "0")}:${endM.toString().padStart(2, "0")}`;
+
   return (
     <div>
-      {/* Time Adjuster */}
-      <div className="flex items-center gap-3 mb-6">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {t("startTime")}:
-        </label>
-        <input
-          type="time"
-          value={startTime}
-          onChange={(e) => onTimeChange(e.target.value)}
-          className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-sm"
-        />
+      {/* Time Adjuster + Total Duration */}
+      <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-zinc-50 dark:bg-zinc-700/50 rounded-xl">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+            {t("startTime")}:
+          </label>
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => onTimeChange(e.target.value)}
+            className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-sm"
+          />
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-zinc-500 dark:text-zinc-400">
+            {locale === "de" ? "Ende" : "End"}: <span className="font-bold text-zinc-700 dark:text-zinc-300">{endTimeStr}</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2 ml-auto px-3 py-1.5 rounded-lg bg-party-purple/10 text-party-purple dark:text-party-yellow text-sm font-bold">
+          ⏱️ {totalHours > 0 ? `${totalHours}h ` : ""}{totalRemainingMins > 0 ? `${totalRemainingMins} Min.` : ""}
+        </div>
       </div>
 
       {/* Timeline */}

@@ -5,6 +5,8 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/types";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { UpgradeModal } from "@/components/upgrade/UpgradeModal";
 import "@/app/globals.css";
 
 const nunito = Nunito({
@@ -61,7 +63,10 @@ export default async function LocaleLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[#FFFDF7] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 font-[family-name:var(--font-nunito)]">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <AuthProvider>
+            <UpgradeModal />
+            {children}
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -9,28 +9,47 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 no-print">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="mt-auto border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 no-print">
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <div className="flex items-center gap-2.5 mb-3">
               <span className="text-xl">🎈</span>
-              <span className="font-bold text-party-purple dark:text-party-yellow">
+              <span className="font-extrabold bg-gradient-to-r from-party-purple to-party-pink bg-clip-text text-transparent dark:from-party-yellow dark:to-party-coral">
                 {t("common.appName")}
               </span>
             </div>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
               {t("common.tagline")}
             </p>
           </div>
 
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-bold text-sm mb-3 text-zinc-800 dark:text-zinc-200">
+              {locale === "de" ? "Schnellzugriff" : "Quick Links"}
+            </h3>
+            <ul className="space-y-2.5 text-sm">
+              <li>
+                <Link href="/wizard" className="text-zinc-500 dark:text-zinc-400 hover:text-party-purple dark:hover:text-party-yellow transition-colors">
+                  🎈 {t("nav.wizard")}
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="text-zinc-500 dark:text-zinc-400 hover:text-party-purple dark:hover:text-party-yellow transition-colors">
+                  📋 {t("auth.myPlans")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold text-sm mb-3 text-zinc-700 dark:text-zinc-300">
+            <h3 className="font-bold text-sm mb-3 text-zinc-800 dark:text-zinc-200">
               {locale === "de" ? "Rechtliches" : "Legal"}
             </h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <Link href="/imprint" className="text-zinc-500 dark:text-zinc-400 hover:text-party-purple dark:hover:text-party-yellow transition-colors">
                   {t("nav.imprint")}
@@ -51,7 +70,7 @@ export function Footer() {
 
           {/* Company Stamp */}
           <div>
-            <h3 className="font-semibold text-sm mb-3 text-zinc-700 dark:text-zinc-300">
+            <h3 className="font-bold text-sm mb-3 text-zinc-800 dark:text-zinc-200">
               {t("footer.company")}
             </h3>
             <address className="text-sm text-zinc-500 dark:text-zinc-400 not-italic leading-relaxed">
@@ -66,8 +85,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-800 text-center text-xs text-zinc-400">
-          &copy; {year} WAMOCON GmbH. {t("footer.copyright")}
+        <div className="mt-10 pt-5 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+          <p>&copy; {year} WAMOCON GmbH. {t("footer.copyright")}</p>
+          <p className="flex items-center gap-1.5">
+            {t("footer.madeWith")} <span className="text-party-coral">❤</span>
+          </p>
         </div>
       </div>
     </footer>

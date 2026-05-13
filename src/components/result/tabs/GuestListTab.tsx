@@ -107,8 +107,9 @@ export function GuestListTab({ guests, onUpdateGuests, locale }: GuestListTabPro
               {/* RSVP Status Toggle */}
               <button
                 onClick={() => cycleRsvp(guest.id, guest.rsvpStatus)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${RSVP_CONFIG[guest.rsvpStatus].colorClass}`}
-                title={t(`rsvp${guest.rsvpStatus.charAt(0).toUpperCase() + guest.rsvpStatus.slice(1)}` as Parameters<typeof t>[0])}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors hover:ring-2 hover:ring-party-purple/30 ${RSVP_CONFIG[guest.rsvpStatus].colorClass}`}
+                title={locale === "de" ? "Klicken zum Ändern" : "Click to change"}
+                aria-label={`${t(`rsvp${guest.rsvpStatus.charAt(0).toUpperCase() + guest.rsvpStatus.slice(1)}` as Parameters<typeof t>[0])} - ${locale === "de" ? "Klicken zum Ändern" : "Click to change"}`}
               >
                 {RSVP_CONFIG[guest.rsvpStatus].icon}
               </button>
@@ -194,7 +195,19 @@ export function GuestListTab({ guests, onUpdateGuests, locale }: GuestListTabPro
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-500 mb-1">{t("rsvpStatus")}</label>
+                    <select
+                      value={guest.rsvpStatus}
+                      onChange={(e) => updateGuest(guest.id, { rsvpStatus: e.target.value as RsvpStatus })}
+                      className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-sm"
+                    >
+                      <option value="pending">⏳ {t("rsvpPending")}</option>
+                      <option value="accepted">✅ {t("rsvpAccepted")}</option>
+                      <option value="declined">❌ {t("rsvpDeclined")}</option>
+                    </select>
+                  </div>
                   <div>
                     <label className="block text-xs font-medium text-zinc-500 mb-1">{t("allergens")}</label>
                     <input

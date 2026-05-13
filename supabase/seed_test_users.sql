@@ -1,0 +1,30 @@
+-- ============================================================
+-- SEED DATA: Test Users for KinderPartyPlaner Auth System
+-- ============================================================
+-- NOTE: These test users must be created via Supabase Dashboard 
+-- or Supabase CLI, as auth.users requires password hashing.
+--
+-- Test Accounts (create via Dashboard > Authentication > Users):
+--
+-- 1. Admin User:
+--    Email: admin@kinderpartyplaner.de
+--    Password: Admin123!
+--    Role: admin, Tier: pro
+--
+-- 2. Free User:
+--    Email: user@kinderpartyplaner.de
+--    Password: User123!
+--    Role: user, Tier: free
+--
+-- 3. Pro User:
+--    Email: pro@kinderpartyplaner.de
+--    Password: Pro123!
+--    Role: user, Tier: pro
+--
+-- After creating users in Dashboard, run these SQL statements
+-- to set their roles and tiers:
+-- ============================================================
+
+-- Set admin role (replace UUID with actual user ID from Dashboard)
+-- UPDATE public.profiles SET role = 'admin', tier = 'pro' WHERE email = 'admin@kinderpartyplaner.de';
+-- UPDATE public.profiles SET tier = 'pro' WHERE email = 'pro@kinderpartyplaner.de';

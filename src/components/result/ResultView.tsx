@@ -29,6 +29,8 @@ import {
   calculateFoodQuantities,
   generateShoppingList,
 } from "@/lib/plan-generator";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { createSupabaseBrowser } from "@/lib/supabase-browser";
 import { ScheduleTab } from "./tabs/ScheduleTab";
 import { GamesTab } from "./tabs/GamesTab";
 import { FoodTab } from "./tabs/FoodTab";
@@ -36,8 +38,11 @@ import { ShoppingTab } from "./tabs/ShoppingTab";
 import { InvitationTab } from "./tabs/InvitationTab";
 import { GoodiesTab } from "./tabs/GoodiesTab";
 import { GuestListTab } from "./tabs/GuestListTab";
+import { TodoTab } from "./tabs/TodoTab";
+import { AiChatPanel } from "@/components/ai/AiChatPanel";
 
 const TABS = [
+  { key: "todo", icon: "✅" },
   { key: "schedule", icon: "🗓️" },
   { key: "games", icon: "🎮" },
   { key: "food", icon: "🍰" },
@@ -61,7 +66,7 @@ export function ResultView() {
   const locale = useLocale() as "de" | "en";
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<string>("schedule");
+  const [activeTab, setActiveTab] = useState<string>("todo");
   const [loading, setLoading] = useState(true);
   const [wizard, setWizard] = useState<WizardData | null>(null);
   const [theme, setTheme] = useState<Theme | null>(null);
@@ -77,6 +82,11 @@ export function ResultView() {
   const [startTime, setStartTime] = useState("14:00");
   const [guests, setGuests] = useState<GuestEntry[]>([]);
   const [editMode, setEditMode] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [disabledSections, setDisabledSections] = useState<Set<string>>(new Set());
+  const { user, profile } = useAuth();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("wizardData");
@@ -217,12 +227,57 @@ export function ResultView() {
     setShoppingList(shopping);
   }, [wizard, foodItems, games, goodieItems, locale]);
 
+  async function handleSharePlan() {
+    if (!wizard || !theme) return;
+
+    // If not logged in, save to sessionStorage and navigate to share preview
+    if (!user) {
+      router.push("/share");
+      return;
+    }
+
+    setSharing(true);
+    try {
+      const supabase = createSupabaseBrowser();
+      const token = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+      const title = wizard.birthdayChildName
+        ? `${wizard.birthdayChildName}${locale === "de" ? "s Party" : "'s Party"}`
+        : locale === "de" ? "Partyplan" : "Party Plan";
+
+      const { error } = await supabase.from("saved_plans").insert({
+        user_id: user.id,
+        title,
+        wizard_data: wizard,
+        plan_data: { wizard, theme, schedule, games, reserveGames: [], recipe, foodItems, shoppingList, invitation, goodieBagItems: goodieItems },
+        is_shared: true,
+        share_token: token,
+      });
+
+      if (error) {
+        // If plan limit reached, show hint
+        console.error("Share error:", error);
+        router.push("/share");
+        return;
+      }
+
+      const url = `${window.location.origin}/${locale}/share/${token}`;
+      setShareUrl(url);
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 3000);
+    } catch {
+      router.push("/share");
+    } finally {
+      setSharing(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="text-6xl animate-bounce mb-4">🎉</div>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 animate-pulse">
+          <div className="text-6xl mb-4 animate-float">🎉</div>
+          <p className="text-lg text-zinc-500 dark:text-zinc-400 animate-pulse-soft">
             {locale === "de" ? "Plan wird erstellt..." : "Creating your plan..."}
           </p>
         </div>
@@ -236,11 +291,13 @@ export function ResultView() {
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="text-4xl mb-2">{theme.emoji}</div>
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-1">
+        <div className="w-16 h-16 rounded-2xl bg-party-purple/10 dark:bg-party-yellow/10 flex items-center justify-center text-3xl mx-auto mb-3">
+          {theme.emoji}
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white mb-1">
           {t("title")}
           {wizard.birthdayChildName && (
-            <span className="text-party-purple dark:text-party-yellow">
+            <span className="gradient-text">
               {" "}{locale === "de" ? "für" : "for"} {wizard.birthdayChildName}
             </span>
           )}
@@ -272,8 +329,8 @@ export function ResultView() {
         )}
       </div>
 
-      {/* Edit Mode Toggle */}
-      <div className="flex justify-end mb-4">
+      {/* Edit Mode Toggle + Section Toggle */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
         <button
           onClick={() => setEditMode(!editMode)}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -284,30 +341,75 @@ export function ResultView() {
         >
           {editMode ? "✏️" : "👁️"} {editMode ? t("editMode") : t("viewMode")}
         </button>
+
+        {editMode && (
+          <div className="flex flex-wrap gap-2">
+            {TABS.filter(({ key }) => key !== "schedule").map(({ key, icon }) => {
+              const isDisabled = disabledSections.has(key);
+              return (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setDisabledSections((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(key)) {
+                        next.delete(key);
+                      } else {
+                        next.add(key);
+                        if (activeTab === key) setActiveTab("schedule");
+                      }
+                      return next;
+                    });
+                  }}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all border ${
+                    isDisabled
+                      ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-500 line-through opacity-60"
+                      : "border-party-mint/30 bg-party-mint/10 text-emerald-700 dark:text-emerald-300"
+                  }`}
+                  title={isDisabled
+                    ? (locale === "de" ? "Klicken zum Aktivieren" : "Click to enable")
+                    : (locale === "de" ? "Klicken zum Deaktivieren" : "Click to disable")}
+                >
+                  {icon} {isDisabled ? "✕" : "✓"}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
-      <div className="flex overflow-x-auto gap-1 mb-6 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl no-print">
-        {TABS.map(({ key, icon }) => (
-          <button
-            key={key}
-            onClick={() => setActiveTab(key)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex-1 justify-center ${
-              activeTab === key
-                ? "bg-white dark:bg-zinc-700 text-party-purple dark:text-party-yellow shadow-sm"
-                : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-            }`}
-          >
-            <span>{icon}</span>
-            <span className="hidden sm:inline">
-              {t(`tab${key.charAt(0).toUpperCase() + key.slice(1)}` as Parameters<typeof t>[0])}
-            </span>
-          </button>
-        ))}
+      <div className="mb-6 no-print">
+        <div className="flex flex-wrap gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+          {TABS.filter(({ key }) => !disabledSections.has(key)).map(({ key, icon }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
+                activeTab === key
+                  ? "bg-white dark:bg-zinc-700 text-party-purple dark:text-party-yellow shadow-sm"
+                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+              }`}
+            >
+              <span>{icon}</span>
+              <span className="hidden sm:inline">
+                {t(`tab${key.charAt(0).toUpperCase() + key.slice(1)}` as Parameters<typeof t>[0])}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 shadow-lg border border-zinc-100 dark:border-zinc-700">
+      <div className="bg-white dark:bg-zinc-800 rounded-2xl p-5 sm:p-6 shadow-lg border border-zinc-100 dark:border-zinc-700 animate-fade-in">
+        {activeTab === "todo" && (
+          <TodoTab
+            wizard={wizard}
+            games={games}
+            shoppingList={shoppingList}
+            locale={locale}
+          />
+        )}
         {activeTab === "schedule" && (
           <ScheduleTab
             schedule={schedule}
@@ -325,6 +427,10 @@ export function ResultView() {
             onSwapGame={handleSwapGame}
             editMode={editMode}
             locale={locale}
+            age={wizard.age}
+            location={wizard.location}
+            themeName={theme ? (locale === "de" ? theme.name_de : theme.name_en) : undefined}
+            guestCount={wizard.guestCount}
           />
         )}
         {activeTab === "food" && (
@@ -370,32 +476,98 @@ export function ResultView() {
       <div className="flex flex-wrap gap-3 justify-center mt-6 no-print">
         <button
           onClick={handleUpdatePlan}
-          className="flex items-center gap-2 px-6 py-3 bg-party-mint text-zinc-900 rounded-full font-medium hover:bg-party-mint/80 transition-colors shadow-md"
+          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-party-mint text-zinc-900 rounded-full text-sm font-bold hover:bg-party-mint/80 transition-all active:scale-95 shadow-md"
         >
           🔄 {t("updatePlan")}
         </button>
         <button
-          onClick={() => router.push("/share")}
-          className="flex items-center gap-2 px-6 py-3 bg-party-purple text-white rounded-full font-medium hover:bg-party-purple-dark transition-colors"
+          onClick={handleSharePlan}
+          disabled={sharing}
+          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-party-purple text-white rounded-full text-sm font-bold hover:bg-party-purple-dark transition-all active:scale-95 shadow-md shadow-party-purple/20 disabled:opacity-50"
         >
-          📤 {t("sharePlan")}
+          {sharing ? "..." : linkCopied ? "✓" : "📤"} {linkCopied ? t("linkCopied") : t("sharePlan")}
         </button>
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 px-6 py-3 bg-party-purple text-white rounded-full font-medium hover:bg-party-purple-dark transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-full text-sm font-bold hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-all active:scale-95"
         >
-          🖨️ {t("exportPdf")}
+          🖨 {t("exportPdf")}
         </button>
         <button
           onClick={() => {
             sessionStorage.removeItem("wizardData");
             router.push("/wizard");
           }}
-          className="flex items-center gap-2 px-6 py-3 border border-zinc-300 dark:border-zinc-600 rounded-full font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 border-2 border-zinc-200 dark:border-zinc-600 rounded-full text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:border-party-purple dark:hover:border-party-yellow hover:text-party-purple dark:hover:text-party-yellow transition-all active:scale-95"
         >
           ✨ {t("newPlan")}
         </button>
       </div>
+
+      {/* Share URL display */}
+      {shareUrl && (
+        <div className="mt-4 p-4 bg-party-mint/10 dark:bg-party-mint/5 border border-party-mint/30 rounded-xl text-center no-print">
+          <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            🔗 {locale === "de" ? "Dein Teilen-Link:" : "Your share link:"}
+          </p>
+          <div className="flex gap-2 items-center justify-center">
+            <code className="text-xs bg-white dark:bg-zinc-800 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 break-all max-w-md">
+              {shareUrl}
+            </code>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(shareUrl);
+                setLinkCopied(true);
+                setTimeout(() => setLinkCopied(false), 3000);
+              }}
+              className="px-3 py-2 bg-party-purple text-white rounded-lg text-xs font-medium hover:bg-party-purple-dark transition-colors shrink-0"
+            >
+              {linkCopied ? "✓" : "📋"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pro gated features hint for free users */}
+      {user && profile?.tier === "free" && (
+        <div className="mt-6 bg-gradient-to-r from-party-purple/5 to-party-yellow/5 dark:from-party-purple/10 dark:to-party-yellow/10 rounded-2xl p-5 border border-party-purple/20 no-print">
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-3 flex items-center gap-2">
+            ⭐ {locale === "de" ? "Pro-Funktionen freischalten" : "Unlock Pro Features"}
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {[
+              { icon: "💬", label: locale === "de" ? "KI-Party-Coach" : "AI Party Coach" },
+              { icon: "🎲", label: locale === "de" ? "KI-Spiele generieren" : "AI Game Generation" },
+              { icon: "✉️", label: locale === "de" ? "KI-Einladungstexte" : "AI Invitation Texts" },
+              { icon: "👨‍👩‍👧", label: locale === "de" ? "Eltern-Kollaboration" : "Parent Collaboration" },
+              { icon: "📬", label: locale === "de" ? "RSVP-Tracking" : "RSVP Tracking" },
+              { icon: "📋", label: locale === "de" ? "Unbegrenzte Pläne" : "Unlimited Plans" },
+            ].map((feat) => (
+              <div
+                key={feat.label}
+                className="flex items-center gap-2 p-2 rounded-lg bg-white/50 dark:bg-zinc-800/50 opacity-60"
+              >
+                <span className="text-lg grayscale">{feat.icon}</span>
+                <span className="text-xs text-zinc-500 line-through">{feat.label}</span>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => router.push("/upgrade")}
+            className="mt-3 text-xs font-bold text-party-purple hover:underline"
+          >
+            {locale === "de" ? "Jetzt auf Pro upgraden →" : "Upgrade to Pro now →"}
+          </button>
+        </div>
+      )}
+
+      {/* AI Chat Panel */}
+      <AiChatPanel
+        wizard={wizard}
+        theme={theme}
+        schedule={schedule}
+        games={games}
+      />
     </div>
   );
 }

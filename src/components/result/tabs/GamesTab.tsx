@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Game } from "@/types";
+import { AiGenerateButton } from "@/components/ai/AiGenerateButton";
+import { AiContentBadge } from "@/components/ai/AiContentBadge";
 
 interface GamesTabProps {
   games: Game[];
@@ -10,11 +12,19 @@ interface GamesTabProps {
   onSwapGame: (gameIndex: number) => void;
   editMode: boolean;
   locale: "de" | "en";
+  age?: number;
+  location?: string;
+  themeName?: string;
+  guestCount?: number;
+  onAddAiGame?: (game: Game) => void;
 }
 
-export function GamesTab({ games, reserveGames, onSwapGame, editMode, locale }: GamesTabProps) {
+export function GamesTab({ games, reserveGames, onSwapGame, editMode, locale, age, location, themeName, guestCount, onAddAiGame }: GamesTabProps) {
   const t = useTranslations("result");
+  const ta = useTranslations("ai");
   const [expandedGame, setExpandedGame] = useState<string | null>(null);
+  const [aiGames, setAiGames] = useState<Game[]>([]);
+  const [generatingGame, setGeneratingGame] = useState(false);
 
   function renderGame(game: Game, index: number, isReserve: boolean) {
     const isExpanded = expandedGame === game.id;
@@ -97,11 +107,69 @@ export function GamesTab({ games, reserveGames, onSwapGame, editMode, locale }: 
     );
   }
 
+  async function handleGenerateAiGame() {
+    if (generatingGame) return;
+    setGeneratingGame(true);
+    try {
+      const existingNames = [...games, ...reserveGames, ...aiGames].map(
+        (g) => (locale === "de" ? g.name_de : g.name_en)
+      );
+      const response = await fetch("/api/ai/generate-game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          locale,
+          age: age ?? 6,
+          location: location ?? "both",
+          themeName: themeName ?? "Allgemein",
+          existingGames: existingNames,
+          guestCount: guestCount ?? 8,
+        }),
+      });
+
+      if (!response.ok) return;
+      const data = await response.json();
+      if (data.game) {
+        const newGame: Game = {
+          id: `ai-${crypto.randomUUID()}`,
+          ...data.game,
+          min_age: (age ?? 6) - 1,
+          max_age: (age ?? 6) + 2,
+          location: (location ?? "both") as Game["location"],
+          activity: data.game.activity as Game["activity"] ?? "active",
+          duration_minutes: data.game.duration_minutes ?? 15,
+          min_players: data.game.min_players ?? 4,
+          theme_slugs: [],
+          materials_de: data.game.materials_de ?? [],
+          materials_en: data.game.materials_en ?? [],
+        };
+        setAiGames((prev) => [...prev, newGame]);
+        onAddAiGame?.(newGame);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setGeneratingGame(false);
+    }
+  }
+
   return (
     <div>
       <div className="space-y-3 mb-8">
         {games.map((game, i) => renderGame(game, i, false))}
       </div>
+
+      {/* AI-generated games */}
+      {aiGames.length > 0 && (
+        <>
+          <h3 className="text-lg font-bold text-zinc-700 dark:text-zinc-300 mb-3 flex items-center gap-2">
+            ✨ {ta("aiGames")} <AiContentBadge />
+          </h3>
+          <div className="space-y-3 mb-8">
+            {aiGames.map((game, i) => renderGame(game, i, false))}
+          </div>
+        </>
+      )}
 
       {reserveGames.length > 0 && (
         <>
@@ -113,6 +181,17 @@ export function GamesTab({ games, reserveGames, onSwapGame, editMode, locale }: 
           </div>
         </>
       )}
+
+      {/* AI Generate Button */}
+      <div className="mt-6 flex justify-center">
+        <AiGenerateButton
+          feature="ai_game_generation"
+          onClick={handleGenerateAiGame}
+          loading={generatingGame}
+          label={ta("generateGame")}
+          icon="🎲"
+        />
+      </div>
     </div>
   );
 }

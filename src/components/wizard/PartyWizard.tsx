@@ -7,9 +7,10 @@ import type { Theme, WizardData, LocationType, AllergenPreferences } from "@/typ
 import { fetchThemes } from "@/lib/data";
 
 const AGES = Array.from({ length: 10 }, (_, i) => i + 3);
-const DURATIONS = [2, 2.5, 3, 3.5];
+const DURATIONS = [1.5, 2, 2.5, 3, 3.5, 4, 5];
 const BUDGETS = ["50", "100", "150", "200", "none"];
 const TOTAL_STEPS = 7;
+const STEP_ICONS = ["🎂", "👫", "📍", "🎨", "⏱️", "🥗", "💰"];
 
 const DEFAULT_ALLERGENS: AllergenPreferences = {
   glutenFree: false,
@@ -115,31 +116,71 @@ export function PartyWizard() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Progress */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400 mb-2">
-          <span>
-            {t("step")} {step} {t("of")} {TOTAL_STEPS}
+      {/* Step indicator with icons */}
+      <div className="mb-6 sm:mb-8">
+        <div className="flex items-center justify-between mb-3">
+          {STEP_ICONS.map((icon, i) => {
+            const stepNum = i + 1;
+            const isActive = step === stepNum;
+            const isDone = step > stepNum;
+            return (
+              <button
+                key={i}
+                onClick={() => { if (isDone) setStep(stepNum); }}
+                disabled={!isDone}
+                className={`relative flex flex-col items-center gap-1 transition-all ${
+                  isDone ? "cursor-pointer" : "cursor-default"
+                }`}
+                aria-label={`${t("step")} ${stepNum}`}
+              >
+                <div
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-base sm:text-lg transition-all ${
+                    isActive
+                      ? "bg-party-purple text-white shadow-lg shadow-party-purple/25 scale-110"
+                      : isDone
+                        ? "bg-party-mint/20 text-party-mint"
+                        : "bg-zinc-100 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-500"
+                  }`}
+                >
+                  {isDone ? <span className="text-sm font-bold">✓</span> : icon}
+                </div>
+                {/* Connector line */}
+                {i < STEP_ICONS.length - 1 && (
+                  <div
+                    className={`absolute top-[18px] sm:top-[20px] left-[calc(50%+18px)] sm:left-[calc(50%+20px)] h-0.5 transition-colors ${
+                      isDone ? "bg-party-mint/40" : "bg-zinc-200 dark:bg-zinc-700"
+                    }`}
+                    style={{ width: "calc(100% - 20px)" }}
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
+          <span className="font-semibold text-party-purple dark:text-party-yellow">
+            {t("step")} {step}/{TOTAL_STEPS}
           </span>
           <span>{Math.round((step / TOTAL_STEPS) * 100)}%</span>
         </div>
-        <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+        <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-1.5 mt-1.5">
           <div
-            className="bg-party-purple h-2 rounded-full transition-all duration-300"
+            className="bg-gradient-to-r from-party-purple to-party-pink h-1.5 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
           />
         </div>
       </div>
 
-      <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 md:p-8 shadow-lg border border-zinc-100 dark:border-zinc-700 min-h-[320px] flex flex-col">
+      <div className="bg-white dark:bg-zinc-800 rounded-2xl p-5 sm:p-6 md:p-8 shadow-lg border border-zinc-100 dark:border-zinc-700 min-h-[320px] flex flex-col">
         {/* Step 1: Age + Birthday Child Name */}
         {step === 1 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step1Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-4">{t("step1Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step1Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step1Desc")}</p>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+              <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
                 {t("birthdayChildName")}
               </label>
               <input
@@ -151,12 +192,15 @@ export function PartyWizard() {
               />
             </div>
 
-            <div className="grid grid-cols-5 gap-3">
+            <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+              {t("step1Title")}
+            </label>
+            <div className="grid grid-cols-5 gap-2 sm:gap-3">
               {AGES.map((age) => (
                 <button
                   key={age}
                   onClick={() => updateWizard({ age })}
-                  className={`py-3 rounded-xl text-lg font-bold transition-all ${
+                  className={`py-3 rounded-xl text-lg font-bold transition-all active:scale-95 ${
                     wizard.age === age
                       ? "bg-party-purple text-white shadow-lg shadow-party-purple/25 scale-105"
                       : "bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-party-purple/10"
@@ -166,15 +210,15 @@ export function PartyWizard() {
                 </button>
               ))}
             </div>
-            <p className="text-center mt-4 text-sm text-zinc-500">{wizard.age} {t("years")}</p>
+            <p className="text-center mt-3 text-sm text-zinc-500">{wizard.age} {t("years")}</p>
           </div>
         )}
 
         {/* Step 2: Guest Count */}
         {step === 2 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step2Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step2Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step2Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step2Desc")}</p>
             <div className="flex flex-col items-center gap-4">
               <input
                 type="range"
@@ -232,7 +276,7 @@ export function PartyWizard() {
               )}
 
               {/* Input fields */}
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <div className="space-y-2 pr-1">
                 {wizard.guestNames.map((name, i) => (
                   <div key={i} className="flex gap-2 items-center">
                     <span className="text-xs text-zinc-400 w-5 text-right shrink-0">{i + 1}.</span>
@@ -258,9 +302,9 @@ export function PartyWizard() {
 
         {/* Step 3: Location */}
         {step === 3 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step3Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step3Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step3Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step3Desc")}</p>
             <div className="grid grid-cols-3 gap-4">
               {locations.map(({ value, label, icon }) => (
                 <button
@@ -282,11 +326,18 @@ export function PartyWizard() {
 
         {/* Step 4: Theme */}
         {step === 4 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step4Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step4Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step4Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step4Desc")}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-2">
-              {themes.map((theme) => (
+              {[...themes].sort((a, b) => {
+                // "Ohne Motto" (no-theme) always first
+                if (a.slug === "no-theme") return -1;
+                if (b.slug === "no-theme") return 1;
+                const nameA = locale === "de" ? a.name_de : a.name_en;
+                const nameB = locale === "de" ? b.name_de : b.name_en;
+                return nameA.localeCompare(nameB);
+              }).map((theme) => (
                 <button
                   key={theme.slug}
                   onClick={() => updateWizard({ themeSlug: theme.slug })}
@@ -308,33 +359,54 @@ export function PartyWizard() {
 
         {/* Step 5: Duration */}
         {step === 5 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step5Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step5Desc")}</p>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step5Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step5Desc")}</p>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {DURATIONS.map((dur) => (
                 <button
                   key={dur}
                   onClick={() => updateWizard({ duration: dur })}
-                  className={`py-6 rounded-xl text-center transition-all ${
+                  className={`py-4 rounded-xl text-center transition-all ${
                     wizard.duration === dur
                       ? "bg-party-purple text-white shadow-lg shadow-party-purple/25 scale-105"
                       : "bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-party-purple/10"
                   }`}
                 >
-                  <div className="text-2xl font-bold">{dur}</div>
-                  <div className="text-sm">{t("hours")}</div>
+                  <div className="text-lg font-bold">{dur}</div>
+                  <div className="text-xs">{t("hours")}</div>
                 </button>
               ))}
+            </div>
+            {/* Custom duration input */}
+            <div className="mt-4 p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl">
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                {locale === "de" ? "Eigene Dauer (in Stunden)" : "Custom duration (in hours)"}
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min={1}
+                  max={8}
+                  step={0.5}
+                  value={wizard.duration}
+                  onChange={(e) => {
+                    const val = Math.min(8, Math.max(1, Number(e.target.value)));
+                    updateWizard({ duration: val });
+                  }}
+                  className="w-24 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-sm font-bold text-center focus:ring-2 focus:ring-party-purple focus:border-transparent"
+                />
+                <span className="text-sm text-zinc-500">{t("hours")}</span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Step 6: Allergies & Preferences */}
         {step === 6 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step6Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step6Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step6Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step6Desc")}</p>
 
             <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
               {t("allergens")}
@@ -372,9 +444,9 @@ export function PartyWizard() {
 
         {/* Step 7: Budget */}
         {step === 7 && (
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold mb-2">{t("step7Title")}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 mb-6">{t("step7Desc")}</p>
+          <div className="flex-1 wizard-step-enter">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">{t("step7Title")}</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-5">{t("step7Desc")}</p>
             <div className="grid grid-cols-1 gap-3">
               {BUDGETS.map((budget) => (
                 <button
@@ -399,18 +471,18 @@ export function PartyWizard() {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-700">
+        <div className="flex justify-between mt-6 sm:mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-700">
           <button
             onClick={prevStep}
             disabled={step === 1}
-            className="px-6 py-2 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             ← {tc("back")}
           </button>
           {step < TOTAL_STEPS ? (
             <button
               onClick={nextStep}
-              className="px-6 py-2 rounded-lg text-sm font-medium bg-party-purple text-white hover:bg-party-purple-dark transition-colors"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-sm font-bold bg-party-purple text-white hover:bg-party-purple-dark shadow-md shadow-party-purple/20 transition-all active:scale-95"
             >
               {tc("next")} →
             </button>
@@ -418,9 +490,9 @@ export function PartyWizard() {
             <button
               onClick={generatePlan}
               disabled={loading}
-              className="px-8 py-3 rounded-full text-sm font-bold bg-party-yellow text-zinc-900 hover:bg-party-yellow/80 transition-all shadow-lg disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-party-yellow to-amber-400 text-zinc-900 shadow-lg shadow-amber-300/30 hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? t("generating") : `🎉 ${t("generatePlan")}`}
+              {loading ? t("generating") : <><span>🎉</span> {t("generatePlan")}</>}
             </button>
           )}
         </div>
