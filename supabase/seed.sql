@@ -1,4 +1,4 @@
-﻿-- Geburtstagspilot V1 - Seed Data
+-- Geburtstagspilot V1 - Seed Data
 -- 14 Themes, 80+ Games, Recipes, Food Items, Goodie Bags, Invitation Templates
 
 -- ============================================================
