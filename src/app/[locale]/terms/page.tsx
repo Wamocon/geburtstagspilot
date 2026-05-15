@@ -13,13 +13,13 @@ export default function TermsPage() {
 
           <h2>1. Geltungsbereich</h2>
           <p>
-            Diese AGB gelten für die Nutzung der Webanwendung KinderPartyPlaner,
+            Diese AGB gelten für die Nutzung der Webanwendung Geburtstagspilot,
             betrieben von der WAMOCON GmbH, Mergenthalerallee 79 - 81, 65760 Eschborn.
           </p>
 
           <h2>2. Leistungsbeschreibung</h2>
           <p>
-            KinderPartyPlaner ist ein kostenloses Online-Tool zur Planung von Kindergeburtstagen.
+            Geburtstagspilot ist ein kostenloses Online-Tool zur Planung von Kindergeburtstagen.
             Der Dienst generiert personalisierte Partypläne basierend auf Nutzereingaben.
           </p>
 

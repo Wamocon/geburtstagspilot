@@ -1,4 +1,4 @@
--- KinderPartyPlaner V1 - Initial Schema
+-- Geburtstagspilot V1 - Initial Schema
 -- Tables: themes, games, recipes, food_items, goodie_bag_items, invitation_templates
 
 -- ============================================================

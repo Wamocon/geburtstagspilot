@@ -253,7 +253,7 @@ export function ShareViewPage({ token }: ShareViewPageProps) {
           <div className="text-center py-4">
             <p className="text-xs text-zinc-400">
               {locale === "de" ? "Erstellt mit" : "Created with"}{" "}
-              <span className="font-bold text-party-purple dark:text-party-yellow">KinderPartyPlaner</span>
+              <span className="font-bold text-party-purple dark:text-party-yellow">Geburtstagspilot</span>
             </p>
           </div>
         </div>

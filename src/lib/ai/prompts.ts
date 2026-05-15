@@ -3,7 +3,7 @@
 
 import type { WizardData, Theme, Game, ScheduleItem } from "@/types";
 
-const BASE_CONTEXT = `Du bist der KinderPartyPlaner AI-Assistent. Du hilfst Eltern bei der Planung von Kindergeburtstagen.
+const BASE_CONTEXT = `Du bist der Geburtstagspilot AI-Assistent. Du hilfst Eltern bei der Planung von Kindergeburtstagen.
 Regeln:
 - Antworte immer in der Sprache des Nutzers (Deutsch oder Englisch).
 - Antworte kindgerecht, freundlich und praxisnah.

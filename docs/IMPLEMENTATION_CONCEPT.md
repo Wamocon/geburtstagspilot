@@ -1,8 +1,8 @@
-# KinderPartyPlaner - Implementation Concept: Roles, Permissions & Persistence
+# Geburtstagspilot - Implementation Concept: Roles, Permissions & Persistence
 
 ## 1. Overview
 
-Transform KinderPartyPlaner from a stateless one-time browser tool into a persistent SaaS application with user accounts, saved plans, role-based access control, and a free/pro tier model.
+Transform Geburtstagspilot from a stateless one-time browser tool into a persistent SaaS application with user accounts, saved plans, role-based access control, and a free/pro tier model.
 
 ---
 
@@ -204,9 +204,9 @@ src/
 
 | Email | Password | Role | Tier |
 |-------|----------|------|------|
-| admin@kinderpartyplaner.de | Admin123! | admin | pro |
-| user@kinderpartyplaner.de | User123! | user | free |
-| pro@kinderpartyplaner.de | Pro123! | user | pro |
+| admin@geburtstagspilot.de | Admin123! | admin | pro |
+| user@geburtstagspilot.de | User123! | user | free |
+| pro@geburtstagspilot.de | Pro123! | user | pro |
 
 ---
 

@@ -1,4 +1,4 @@
-# Konzept: KI-Enhancement - KinderPartyPlaner
+# Konzept: KI-Enhancement - Geburtstagspilot
 
 Version: 1.0 | Stand: Mai 2026 | Status: Planungsphase
 Perspektive: Software-Architekt + Product Owner
@@ -924,7 +924,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
 # Email (fur RSVP und Aufgaben-Erinnerungen)
 RESEND_API_KEY=re_...
-FROM_EMAIL=noreply@kinderpartyplaner.de
+FROM_EMAIL=noreply@geburtstagspilot.de
 ```
 
 ---

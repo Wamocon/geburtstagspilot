@@ -1,4 +1,4 @@
-# Konzept: Free vs. Pro Plan - KinderPartyPlaner
+# Konzept: Free vs. Pro Plan - Geburtstagspilot
 
 Version: 1.0 | Stand: Mai 2026 | Status: Planungsphase
 

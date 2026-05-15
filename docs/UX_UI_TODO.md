@@ -1,4 +1,4 @@
-# KinderPartyPlaner - UX/UI Todo List
+# Geburtstagspilot - UX/UI Todo List
 
 ## Status-Legende
 - ✅ Erledigt

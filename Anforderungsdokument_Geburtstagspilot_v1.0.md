@@ -1,11 +1,11 @@
-# Anforderungsdokument KinderPartyPlaner (Kindergeburtstag-Planungs-App)
+# Anforderungsdokument Geburtstagspilot (Kindergeburtstag-Planungs-App)
 ## Softwareprojekt Welle 10
 
 ---
 
 | | |
 |---|---|
-| **Projekt** | KinderPartyPlaner. Dein kompletter Kindergeburtstag in 5 Minuten |
+| **Projekt** | Geburtstagspilot. Dein kompletter Kindergeburtstag in 5 Minuten |
 | **Unternehmen** | WAMOCON GmbH |
 | **App Version** | 1 |
 | **Erstellt von** | Daniel Moretz |
@@ -20,7 +20,7 @@
 
 ### 1.1 Die Idee
 
-**KinderPartyPlaner** ist eine browserbasierte Web-App, die Eltern in unter 5 Minuten einen kompletten Kindergeburtstag plant von der Einladung über den Zeitablauf, Spiele mit Anleitung, Kuchen- und Essensideen bis zur Einkaufsliste und den Goodie-Bags. Kein Account nötig, sofort Ergebnis, PDF-Export, WhatsApp-teilbar.
+**Geburtstagspilot** ist eine browserbasierte Web-App, die Eltern in unter 5 Minuten einen kompletten Kindergeburtstag plant von der Einladung über den Zeitablauf, Spiele mit Anleitung, Kuchen- und Essensideen bis zur Einkaufsliste und den Goodie-Bags. Kein Account nötig, sofort Ergebnis, PDF-Export, WhatsApp-teilbar.
 
 Das Produkt löst ein universelles Elternproblem: Jedes Jahr, jedes Kind, derselbe Stress. Was ist das Motto? Welche Spiele passen zum Alter? Wie viele Würstchen für 12 Kinder? Was kommt in die Mitgebsel-Tüten? Wie strukturiere ich 3 Stunden, damit kein Chaos ausbricht? Bisher: Pinterest-Spirale, Mama-Blogs, WhatsApp-Gruppen, improvisierte Excel-Listen.
 
@@ -93,7 +93,7 @@ Quellen: Destatis Bevölkerungsstatistik 2025, Statistik Austria Bevölkerung 20
 
 ### 3.1 Direkte und indirekte Anbieter
 
-| Anbieter | Art | Stärke | Schwäche / Chance für KinderPartyPlaner |
+| Anbieter | Art | Stärke | Schwäche / Chance für Geburtstagspilot |
 |---|---|---|---|
 | **Pinterest** | Plattform | Riesige Inspirationsquelle, visuell | Keine Struktur, kein Workflow, keine Mengenberechnung, Zeitfresser |
 | **Mama-Blogs** (z.B. Hallo-Eltern, Familie.de) | Content | Gute Spielideen, SEO-stark | Keine Interaktivität, keine Personalisierung nach Alter/Gästezahl, Werbung |
@@ -107,7 +107,7 @@ Quellen: Destatis Bevölkerungsstatistik 2025, Statistik Austria Bevölkerung 20
 
 ### 3.2 Warum Blog-Content nicht reicht
 
-| Problem mit Blog-Ansatz | Lösung KinderPartyPlaner |
+| Problem mit Blog-Ansatz | Lösung Geburtstagspilot |
 |---|---|
 | Statische Listen (nicht personalisiert) | Wizard mit Alter × Gästezahl × Motto × Indoor/Outdoor |
 | Mengen unklar ("etwas Saft, ein paar Würstchen") | Exakte Berechnung: 12 Kinder × 2 Würstchen = 24 Würstchen |
@@ -152,7 +152,7 @@ Vier Nutzerprofile:
 
 ### 5.1 Nutzen für die Nutzer (Eltern)
 
-| Problem heute | Lösung durch KinderPartyPlaner | Konkreter Vorteil |
+| Problem heute | Lösung durch Geburtstagspilot | Konkreter Vorteil |
 |---|---|---|
 | Stundenlange Recherche auf Pinterest/Blogs | Wizard generiert Komplettplan in 5 Minuten | 3–5 Stunden Planungszeit gespart |
 | Keine altersgerechte Filterung | Spiele und Ablauf angepasst an exaktes Alter | Keine peinlichen Spiel-Fails |
@@ -355,7 +355,7 @@ V1 ist ohne jede Partnerschaft, ohne Behördengenehmigung und ohne laufende API-
 
 **Pricing:** €3,99 pro Schnitzeljagd oder €9,99/Jahr für unbegrenzt.
 
-**Warum verfolgbar:** Schnitzeljagden sind der Nr.1-Suchanfrage-Treiber bei Kindergeburtstagen (Google Trends DACH 2025). Kann als Standalone oder als Premium-Modul innerhalb von KinderPartyPlaner funktionieren.
+**Warum verfolgbar:** Schnitzeljagden sind der Nr.1-Suchanfrage-Treiber bei Kindergeburtstagen (Google Trends DACH 2025). Kann als Standalone oder als Premium-Modul innerhalb von Geburtstagspilot funktionieren.
 
 ### 9.2 Alternative B: KinderMenü-Rechner (Party-Essens-Planer)
 
@@ -424,13 +424,13 @@ V1 ist ohne jede Partnerschaft, ohne Behördengenehmigung und ohne laufende API-
 
 ### 12.1 Markenname und Bedeutung
 
-**KinderPartyPlaner** ist bewusst deskriptiv gewählt, kein abstraktes Kunstwort, sondern sofort verständlich. In einem Markt, der von SEO und Google-Suche lebt, ist ein beschreibender Name ein strategischer Vorteil:
+**Geburtstagspilot** ist bewusst gewählt: seriös, klar, DACH-tauglich und sofort verständlich. In einem Markt, der von SEO und Google-Suche lebt, ist ein beschreibender Name ein strategischer Vorteil:
 
 - **SEO-Power:** "Kindergeburtstag planen" und "Kinder Party" sind hochvolumige Keywords. Der Markenname enthält die Suchwörter nativ.
 - **Sofortverständlich:** Keine Erklärung nötig. Eltern wissen nach dem Namen, was das Tool tut.
-- **WhatsApp-teilbar:** "Ich hab den Geburtstag mit dem KinderPartyPlaner geplant, mega!", natürliche Weiterempfehlung.
+- **WhatsApp-teilbar:** "Ich hab den Geburtstag mit dem Geburtstagspilot geplant, mega!", natürliche Weiterempfehlung.
 
-**Alternative Kurzformen:** KiPaPla (für Social Media), PartyPlaner (informell).
+**Alternative Kurzformen:** GebPilot (fuer Social Media), Pilot (informell).
 
 ### 12.2 Positionierung
 
@@ -440,12 +440,12 @@ V1 ist ohne jede Partnerschaft, ohne Behördengenehmigung und ohne laufende API-
 | **Werte** | Einfach · Fröhlich · Verlässlich · Eltern-freundlich |
 | **Tonalität** | Warmherzig, humorvoll, verständnisvoll für Elternstress. Nie herablassend, nie perfektionistisch |
 | **Sprachregeln** | Du-Ansprache. Kurze Sätze. Emojis erlaubt (🎂🎈🎁). Keine Erziehungsratschläge. |
-| **Was KinderPartyPlaner nicht ist** | Kein Erziehungs-Blog. Kein Deko-Shop. Keine "perfekte Instagram-Mama"-Marke. |
+| **Was Geburtstagspilot nicht ist** | Kein Erziehungs-Blog. Kein Deko-Shop. Keine "perfekte Instagram-Mama"-Marke. |
 
 **Claim-Vorschläge:**
-- **"KinderPartyPlaner, 3 Stunden Spaß. 5 Minuten Planung."** (Hauptclaim)
-- "KinderPartyPlaner. Damit du die Party genießen kannst."
-- "KinderPartyPlaner. Geburtstag planen ohne Stress."
+- **"Geburtstagspilot, 3 Stunden Spaß. 5 Minuten Planung."** (Hauptclaim)
+- "Geburtstagspilot. Damit du die Party genießen kannst."
+- "Geburtstagspilot. Geburtstag planen ohne Stress."
 
 ### 12.3 Visuelle Identität
 
@@ -476,11 +476,11 @@ Geschätztes organisches Traffic-Potenzial nach 6 Monaten: **30.000–80.000 Bes
 
 #### 12.4.2 Virales Wachstum über Einladungen
 
-Jede generierte Einladung enthält (im Free-Tier) dezent: "Erstellt mit KinderPartyPlaner.de 🎈". Bei WhatsApp-Weiterleitung sehen 8–15 Eltern den Markennamen pro Einladung. Bei 1.000 generierten Einladungen/Monat → 8.000–15.000 Brand-Impressions kostenlos.
+Jede generierte Einladung enthält (im Free-Tier) dezent: "Erstellt mit Geburtstagspilot.de 🎈". Bei WhatsApp-Weiterleitung sehen 8–15 Eltern den Markennamen pro Einladung. Bei 1.000 generierten Einladungen/Monat → 8.000–15.000 Brand-Impressions kostenlos.
 
 #### 12.4.3 Social Media (Instagram + Pinterest)
 
-- **Instagram:** "Motto des Monats" Reels (30 Sek: "So planst du eine Piratenparty in 5 Minuten"). Eltern-UGC: "Zeig uns deine Party!" mit Hashtag #KinderPartyPlaner
+- **Instagram:** "Motto des Monats" Reels (30 Sek: "So planst du eine Piratenparty in 5 Minuten"). Eltern-UGC: "Zeig uns deine Party!" mit Hashtag #Geburtstagspilot
 - **Pinterest:** Pins für jedes Motto (Einladungs-Vorschau, Spielideen-Infografik, Kuchen-Bild). Pinterest ist die Nr.1-Plattform für Kindergeburtstags-Inspiration → natürlicher Fit.
 
 #### 12.4.4 Partnerschaften (ab Monat 3)

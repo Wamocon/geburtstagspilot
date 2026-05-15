@@ -1,4 +1,4 @@
-# KinderPartyPlaner - Implementierungsfortschritt
+# Geburtstagspilot - Implementierungsfortschritt
 
 ## Status: V1 Implementierung abgeschlossen
 

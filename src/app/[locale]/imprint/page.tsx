@@ -35,7 +35,7 @@ export default function ImprintPage() {
 
           <h2>Angaben zum Angebot</h2>
           <p>
-            KinderPartyPlaner ist eine webbasierte Applikation zur Planung von Kindergeburtstagen.
+            Geburtstagspilot ist eine webbasierte Applikation zur Planung von Kindergeburtstagen.
             Das Angebot richtet sich an Eltern und Erziehungsberechtigte im deutschsprachigen Raum.
           </p>
             </div>

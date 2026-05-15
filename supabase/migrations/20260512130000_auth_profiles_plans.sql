@@ -1,4 +1,4 @@
--- KinderPartyPlaner V2 - Auth, Profiles, Saved Plans
+-- Geburtstagspilot V2 - Auth, Profiles, Saved Plans
 -- Tables: profiles, saved_plans
 -- Trigger: auto-create profile on auth.users insert
 

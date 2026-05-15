@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "KinderPartyPlaner",
+    "appName": "Geburtstagspilot",
     "tagline": "3 Stunden Spaß. 5 Minuten Planung.",
     "startPlanning": "Jetzt planen",
     "learnMore": "Mehr erfahren",
@@ -218,7 +218,7 @@
     "saveChanges": "Änderungen speichern",
     "sharePlan": "Plan teilen",
     "shareTitle": "Partyplan",
-    "shareSubtitle": "Erstellt mit KinderPartyPlaner",
+    "shareSubtitle": "Erstellt mit Geburtstagspilot",
     "sectionSchedule": "Zeitplan",
     "sectionGames": "Spiele",
     "sectionFood": "Essen & Trinken",

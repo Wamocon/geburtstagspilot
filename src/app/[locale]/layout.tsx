@@ -16,7 +16,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "KinderPartyPlaner - 3 Stunden Spass. 5 Minuten Planung.",
+  title: "Geburtstagspilot - 3 Stunden Spass. 5 Minuten Planung.",
   description:
     "Plane den perfekten Kindergeburtstag in 5 Minuten. Zeitablauf, Spiele, Rezepte, Einkaufsliste und Einladung - alles aus einem Wizard.",
   icons: {

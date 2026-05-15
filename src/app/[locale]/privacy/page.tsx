@@ -21,7 +21,7 @@ export default function PrivacyPage() {
 
           <h2>2. Erhebung und Verarbeitung personenbezogener Daten</h2>
           <p>
-            KinderPartyPlaner erhebt in Version 1 keine personenbezogenen Daten.
+            Geburtstagspilot erhebt in Version 1 keine personenbezogenen Daten.
             Es ist kein Nutzerkonto erforderlich. Alle eingegebenen Daten (Alter, Gästezahl, Motto)
             werden ausschließlich lokal im Browser verarbeitet und nicht an Server übermittelt.
           </p>
