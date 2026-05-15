@@ -30,13 +30,18 @@ export function PlanCard({ plan, onDelete }: PlanCardProps) {
       return;
     }
     setDeleting(true);
-    const supabase = createSupabaseBrowser();
-    const { error } = await supabase.from("saved_plans").delete().eq("id", plan.id);
-    if (!error) {
-      onDelete(plan.id);
+    try {
+      const supabase = createSupabaseBrowser();
+      const { error } = await supabase.from("saved_plans").delete().eq("id", plan.id);
+      if (!error) {
+        onDelete(plan.id);
+      }
+    } catch {
+      // Supabase unreachable
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
     }
-    setDeleting(false);
-    setConfirmDelete(false);
   }
 
   function handleLoad() {

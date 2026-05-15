@@ -27,19 +27,24 @@ function AdminPlansContent() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createSupabaseBrowser();
-      const { data: usersData } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("email", { ascending: true });
-      setUsers((usersData as Profile[]) || []);
+      try {
+        const supabase = createSupabaseBrowser();
+        const { data: usersData } = await supabase
+          .from("profiles")
+          .select("*")
+          .order("email", { ascending: true });
+        setUsers((usersData as Profile[]) || []);
 
-      const { data: plansData } = await supabase
-        .from("saved_plans")
-        .select("id, title, wizard_data, is_shared, created_at, updated_at, user_id")
-        .order("created_at", { ascending: false });
-      setPlans((plansData as PlanRow[]) || []);
-      setLoading(false);
+        const { data: plansData } = await supabase
+          .from("saved_plans")
+          .select("id, title, wizard_data, is_shared, created_at, updated_at, user_id")
+          .order("created_at", { ascending: false });
+        setPlans((plansData as PlanRow[]) || []);
+      } catch {
+        // Supabase unreachable
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);

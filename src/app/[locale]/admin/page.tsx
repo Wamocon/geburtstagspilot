@@ -24,24 +24,29 @@ function AdminDashboardContent() {
 
   useEffect(() => {
     async function loadDashboard() {
-      const supabase = createSupabaseBrowser();
+      try {
+        const supabase = createSupabaseBrowser();
 
-      const [usersRes, plansRes, proRes, pendingRes, requestsRes] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("saved_plans").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("tier", "pro"),
-        supabase.from("pro_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
-        supabase.from("pro_requests").select("*").order("created_at", { ascending: false }).limit(5),
-      ]);
+        const [usersRes, plansRes, proRes, pendingRes, requestsRes] = await Promise.all([
+          supabase.from("profiles").select("id", { count: "exact", head: true }),
+          supabase.from("saved_plans").select("id", { count: "exact", head: true }),
+          supabase.from("profiles").select("id", { count: "exact", head: true }).eq("tier", "pro"),
+          supabase.from("pro_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+          supabase.from("pro_requests").select("*").order("created_at", { ascending: false }).limit(5),
+        ]);
 
-      setStats({
-        users: usersRes.count || 0,
-        plans: plansRes.count || 0,
-        proUsers: proRes.count || 0,
-        pendingRequests: pendingRes.count || 0,
-      });
-      setRecentRequests((requestsRes.data as ProRequest[]) || []);
-      setLoading(false);
+        setStats({
+          users: usersRes.count || 0,
+          plans: plansRes.count || 0,
+          proUsers: proRes.count || 0,
+          pendingRequests: pendingRes.count || 0,
+        });
+        setRecentRequests((requestsRes.data as ProRequest[]) || []);
+      } catch {
+        // Supabase unreachable - keep default stats
+      } finally {
+        setLoading(false);
+      }
     }
     loadDashboard();
   }, []);

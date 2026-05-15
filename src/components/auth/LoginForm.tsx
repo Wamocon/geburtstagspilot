@@ -18,20 +18,25 @@ export function LoginForm({ redirect }: { redirect?: string }) {
     setError("");
     setLoading(true);
 
-    const supabase = createSupabaseBrowser();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const supabase = createSupabaseBrowser();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (signInError) {
+      if (signInError) {
+        setError(t("loginError"));
+        setLoading(false);
+        return;
+      }
+
+      router.push(redirect || "/dashboard");
+      router.refresh();
+    } catch {
       setError(t("loginError"));
       setLoading(false);
-      return;
     }
-
-    router.push(redirect || "/dashboard");
-    router.refresh();
   }
 
   return (

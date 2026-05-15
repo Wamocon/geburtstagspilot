@@ -76,31 +76,36 @@ export function SavePlanButton({ wizardData, planData, onSaved }: SavePlanButton
     setSaving(true);
     setError("");
 
-    const supabase = createSupabaseBrowser();
-    const { data, error: saveError } = await supabase
-      .from("saved_plans")
-      .insert({
-        user_id: user!.id,
-        title: planName.trim(),
-        wizard_data: wizardData,
-        plan_data: planData,
-      })
-      .select("id")
-      .single();
+    try {
+      const supabase = createSupabaseBrowser();
+      const { data, error: saveError } = await supabase
+        .from("saved_plans")
+        .insert({
+          user_id: user!.id,
+          title: planName.trim(),
+          wizard_data: wizardData,
+          plan_data: planData,
+        })
+        .select("id")
+        .single();
 
-    if (saveError) {
+      if (saveError) {
+        setError(t("saveError"));
+        setSaving(false);
+        return;
+      }
+
+      setSuccess(true);
+      setSaving(false);
+      setShowNameInput(false);
+      await refreshProfile();
+
+      if (data && onSaved) {
+        onSaved(data.id);
+      }
+    } catch {
       setError(t("saveError"));
       setSaving(false);
-      return;
-    }
-
-    setSuccess(true);
-    setSaving(false);
-    setShowNameInput(false);
-    await refreshProfile();
-
-    if (data && onSaved) {
-      onSaved(data.id);
     }
 
     setTimeout(() => setSuccess(false), 3000);

@@ -37,14 +37,19 @@ function AdminRequestsContent() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createSupabaseBrowser();
-      const [reqRes, usersRes] = await Promise.all([
-        supabase.from("pro_requests").select("*").order("created_at", { ascending: false }),
-        supabase.from("profiles").select("id, email, display_name, tier, created_at"),
-      ]);
-      setRequests((reqRes.data as ProRequest[]) || []);
-      setUsers((usersRes.data as UserInfo[]) || []);
-      setLoading(false);
+      try {
+        const supabase = createSupabaseBrowser();
+        const [reqRes, usersRes] = await Promise.all([
+          supabase.from("pro_requests").select("*").order("created_at", { ascending: false }),
+          supabase.from("profiles").select("id, email, display_name, tier, created_at"),
+        ]);
+        setRequests((reqRes.data as ProRequest[]) || []);
+        setUsers((usersRes.data as UserInfo[]) || []);
+      } catch {
+        // Supabase unreachable
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);
@@ -60,52 +65,62 @@ function AdminRequestsContent() {
   async function handleApprove(requestId: string, userId: string) {
     if (!confirm(t("confirmApprove"))) return;
     setProcessing(requestId);
-    const supabase = createSupabaseBrowser();
+    try {
+      const supabase = createSupabaseBrowser();
 
-    // Update request status
-    await supabase
-      .from("pro_requests")
-      .update({
-        status: "approved",
-        admin_notes: notes[requestId] || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", requestId);
+      // Update request status
+      await supabase
+        .from("pro_requests")
+        .update({
+          status: "approved",
+          admin_notes: notes[requestId] || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", requestId);
 
-    // Upgrade user to pro
-    await supabase
-      .from("profiles")
-      .update({ tier: "pro", updated_at: new Date().toISOString() })
-      .eq("id", userId);
+      // Upgrade user to pro
+      await supabase
+        .from("profiles")
+        .update({ tier: "pro", updated_at: new Date().toISOString() })
+        .eq("id", userId);
 
-    // Update local state
-    setRequests((prev) =>
-      prev.map((r) => r.id === requestId ? { ...r, status: "approved", admin_notes: notes[requestId] || null } : r)
-    );
-    setUsers((prev) =>
-      prev.map((u) => u.id === userId ? { ...u, tier: "pro" } : u)
-    );
-    setProcessing(null);
+      // Update local state
+      setRequests((prev) =>
+        prev.map((r) => r.id === requestId ? { ...r, status: "approved", admin_notes: notes[requestId] || null } : r)
+      );
+      setUsers((prev) =>
+        prev.map((u) => u.id === userId ? { ...u, tier: "pro" } : u)
+      );
+    } catch {
+      // Supabase unreachable
+    } finally {
+      setProcessing(null);
+    }
   }
 
   async function handleReject(requestId: string) {
     if (!confirm(t("confirmReject"))) return;
     setProcessing(requestId);
-    const supabase = createSupabaseBrowser();
+    try {
+      const supabase = createSupabaseBrowser();
 
-    await supabase
-      .from("pro_requests")
-      .update({
-        status: "rejected",
-        admin_notes: notes[requestId] || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", requestId);
+      await supabase
+        .from("pro_requests")
+        .update({
+          status: "rejected",
+          admin_notes: notes[requestId] || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", requestId);
 
-    setRequests((prev) =>
-      prev.map((r) => r.id === requestId ? { ...r, status: "rejected", admin_notes: notes[requestId] || null } : r)
-    );
-    setProcessing(null);
+      setRequests((prev) =>
+        prev.map((r) => r.id === requestId ? { ...r, status: "rejected", admin_notes: notes[requestId] || null } : r)
+      );
+    } catch {
+      // Supabase unreachable
+    } finally {
+      setProcessing(null);
+    }
   }
 
   return (

@@ -27,20 +27,26 @@ export async function POST(request: Request) {
   }
 
   // Auth check - Pro tier required
-  const supabase = await createSupabaseServer();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
+  let user;
+  try {
+    const supabase = await createSupabaseServer();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+    if (!user) {
+      return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+    }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tier")
-    .eq("id", user.id)
-    .single();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tier")
+      .eq("id", user.id)
+      .single();
 
-  if (profile?.tier !== "pro") {
-    return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
+    if (profile?.tier !== "pro") {
+      return NextResponse.json({ error: "PRO_REQUIRED" }, { status: 403 });
+    }
+  } catch {
+    return NextResponse.json({ error: "SERVICE_UNAVAILABLE" }, { status: 503 });
   }
 
   // Parse body

@@ -19,13 +19,18 @@ function DashboardContent() {
 
   useEffect(() => {
     async function loadPlans() {
-      const supabase = createSupabaseBrowser();
-      const { data } = await supabase
-        .from("saved_plans")
-        .select("*")
-        .order("updated_at", { ascending: false });
-      setPlans((data as SavedPlan[]) || []);
-      setLoading(false);
+      try {
+        const supabase = createSupabaseBrowser();
+        const { data } = await supabase
+          .from("saved_plans")
+          .select("*")
+          .order("updated_at", { ascending: false });
+        setPlans((data as SavedPlan[]) || []);
+      } catch {
+        // Supabase unreachable - show empty plans
+      } finally {
+        setLoading(false);
+      }
     }
     loadPlans();
   }, []);

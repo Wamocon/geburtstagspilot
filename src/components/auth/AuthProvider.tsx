@@ -33,12 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createSupabaseBrowser();
 
   async function fetchProfile(userId: string) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+      setProfile(data);
+    } catch {
+      // Supabase unreachable - profile stays null
+      setProfile(null);
+    }
   }
 
   async function refreshProfile() {
@@ -48,7 +53,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // Supabase unreachable - clear local state anyway
+    }
     setUser(null);
     setProfile(null);
   }
@@ -64,7 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
-        await fetchProfile(currentUser.id);
+        try {
+          await fetchProfile(currentUser.id);
+        } catch {
+          // Profile fetch failed - continue without profile
+        }
       } else {
         setProfile(null);
       }

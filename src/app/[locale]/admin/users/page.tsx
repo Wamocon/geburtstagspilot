@@ -16,31 +16,41 @@ function UserManagementContent() {
 
   useEffect(() => {
     async function loadUsers() {
-      const supabase = createSupabaseBrowser();
-      const { data } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false });
-      setUsers((data as Profile[]) || []);
-      setLoading(false);
+      try {
+        const supabase = createSupabaseBrowser();
+        const { data } = await supabase
+          .from("profiles")
+          .select("*")
+          .order("created_at", { ascending: false });
+        setUsers((data as Profile[]) || []);
+      } catch {
+        // Supabase unreachable
+      } finally {
+        setLoading(false);
+      }
     }
     loadUsers();
   }, []);
 
   async function updateUser(userId: string, updates: { role?: UserRole; tier?: UserTier }) {
     setUpdating(userId);
-    const supabase = createSupabaseBrowser();
-    const { error } = await supabase
-      .from("profiles")
-      .update(updates)
-      .eq("id", userId);
+    try {
+      const supabase = createSupabaseBrowser();
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", userId);
 
-    if (!error) {
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, ...updates } : u))
-      );
+      if (!error) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === userId ? { ...u, ...updates } : u))
+        );
+      }
+    } catch {
+      // Supabase unreachable
+    } finally {
+      setUpdating(null);
     }
-    setUpdating(null);
   }
 
   return (
