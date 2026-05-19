@@ -6,7 +6,7 @@ import { usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserMenu } from "@/components/auth/UserMenu";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function Header() {
   const t = useTranslations();
@@ -21,6 +21,18 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const navLinks = [
     { href: "/wizard" as const, label: t("nav.wizard"), icon: "🎈" },
@@ -74,11 +86,11 @@ export function Header() {
           <ThemeToggle />
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className="relative z-50 p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             aria-label="Menu"
             aria-expanded={menuOpen}
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-6 h-6 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               {menuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -89,32 +101,54 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <nav className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 animate-slide-down">
-          <div className="px-4 py-3 space-y-1">
-            {navLinks.map(({ href, label, icon }) => (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+          {/* Menu Panel */}
+          <nav className="fixed inset-x-0 top-16 bottom-0 z-40 md:hidden bg-white dark:bg-zinc-900 overflow-y-auto animate-slide-down">
+            <div className="px-5 py-6 space-y-2">
+              {navLinks.map(({ href, label, icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={closeMenu}
+                  className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-semibold transition-all ${
+                    isActive(href)
+                      ? "text-party-purple dark:text-party-yellow bg-party-purple/10 dark:bg-party-yellow/10"
+                      : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:bg-zinc-200 dark:active:bg-zinc-700"
+                  }`}
+                >
+                  <span className="text-2xl">{icon}</span>
+                  {label}
+                </Link>
+              ))}
+
+              <div className="h-px bg-zinc-200 dark:bg-zinc-700 my-4" />
+
+              {/* CTA in mobile menu */}
               <Link
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  isActive(href)
-                    ? "text-party-purple dark:text-party-yellow bg-party-purple/10 dark:bg-party-yellow/10"
-                    : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                }`}
+                href="/wizard"
+                onClick={closeMenu}
+                className="flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-base font-bold bg-party-purple text-white shadow-lg shadow-party-purple/25 active:scale-[0.98] transition-all"
               >
-                <span className="text-lg">{icon}</span>
-                {label}
+                🎈 {t("common.startPlanning")}
               </Link>
-            ))}
-            <div className="h-px bg-zinc-200 dark:bg-zinc-700 my-2" />
-            <div className="flex items-center justify-between px-4 py-2">
-              <UserMenu />
-              <LanguageSwitcher />
+
+              <div className="h-px bg-zinc-200 dark:bg-zinc-700 my-4" />
+
+              <div className="flex items-center justify-between px-2 py-2">
+                <UserMenu />
+                <LanguageSwitcher />
+              </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </>
       )}
     </header>
   );

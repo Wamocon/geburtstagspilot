@@ -380,23 +380,27 @@ export function ResultView() {
 
       {/* Tabs */}
       <div className="mb-6 no-print">
-        <div className="flex flex-wrap gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl">
-          {TABS.filter(({ key }) => !disabledSections.has(key)).map(({ key, icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
-                activeTab === key
-                  ? "bg-white dark:bg-zinc-700 text-party-purple dark:text-party-yellow shadow-sm"
-                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
-              }`}
-            >
-              <span>{icon}</span>
-              <span className="hidden sm:inline">
-                {t(`tab${key.charAt(0).toUpperCase() + key.slice(1)}` as Parameters<typeof t>[0])}
-              </span>
-            </button>
-          ))}
+        <div className="relative">
+          {/* Scroll fade hint right */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-100 dark:from-zinc-800 to-transparent rounded-r-xl pointer-events-none z-10 sm:hidden" aria-hidden="true" />
+          <div className="flex gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl overflow-x-auto scrollbar-hide">
+            {TABS.filter(({ key }) => !disabledSections.has(key)).map(({ key, icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  activeTab === key
+                    ? "bg-white dark:bg-zinc-700 text-party-purple dark:text-party-yellow shadow-sm"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"
+                }`}
+              >
+                <span>{icon}</span>
+                <span className="hidden sm:inline">
+                  {t(`tab${key.charAt(0).toUpperCase() + key.slice(1)}` as Parameters<typeof t>[0])}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -472,24 +476,24 @@ export function ResultView() {
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3 justify-center mt-6 no-print">
+      {/* Desktop Actions */}
+      <div className="hidden sm:flex flex-wrap gap-3 justify-center mt-6 no-print">
         <button
           onClick={handleUpdatePlan}
-          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-party-mint text-zinc-900 rounded-full text-sm font-bold hover:bg-party-mint/80 transition-all active:scale-95 shadow-md"
+          className="flex items-center gap-2 px-6 py-3 bg-party-mint text-zinc-900 rounded-full text-sm font-bold hover:bg-party-mint/80 transition-all active:scale-95 shadow-md"
         >
           🔄 {t("updatePlan")}
         </button>
         <button
           onClick={handleSharePlan}
           disabled={sharing}
-          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-party-purple text-white rounded-full text-sm font-bold hover:bg-party-purple-dark transition-all active:scale-95 shadow-md shadow-party-purple/20 disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-party-purple text-white rounded-full text-sm font-bold hover:bg-party-purple-dark transition-all active:scale-95 shadow-md shadow-party-purple/20 disabled:opacity-50"
         >
           {sharing ? "..." : linkCopied ? "✓" : "📤"} {linkCopied ? t("linkCopied") : t("sharePlan")}
         </button>
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-full text-sm font-bold hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-all active:scale-95"
+          className="flex items-center gap-2 px-6 py-3 bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-full text-sm font-bold hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-all active:scale-95"
         >
           🖨 {t("exportPdf")}
         </button>
@@ -498,10 +502,50 @@ export function ResultView() {
             sessionStorage.removeItem("wizardData");
             router.push("/wizard");
           }}
-          className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 border-2 border-zinc-200 dark:border-zinc-600 rounded-full text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:border-party-purple dark:hover:border-party-yellow hover:text-party-purple dark:hover:text-party-yellow transition-all active:scale-95"
+          className="flex items-center gap-2 px-6 py-3 border-2 border-zinc-200 dark:border-zinc-600 rounded-full text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:border-party-purple dark:hover:border-party-yellow hover:text-party-purple dark:hover:text-party-yellow transition-all active:scale-95"
         >
           ✨ {t("newPlan")}
         </button>
+      </div>
+
+      {/* Mobile Sticky Action Bar */}
+      <div className="fixed bottom-0 inset-x-0 z-30 sm:hidden no-print">
+        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-lg border-t border-zinc-200 dark:border-zinc-800 px-3 py-2.5 safe-area-bottom">
+          <div className="flex items-center justify-around gap-1 max-w-lg mx-auto">
+            <button
+              onClick={handleUpdatePlan}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-party-mint active:bg-party-mint/10 transition-colors"
+            >
+              <span className="text-lg">🔄</span>
+              <span className="text-[10px] font-semibold">{t("updatePlan")}</span>
+            </button>
+            <button
+              onClick={handleSharePlan}
+              disabled={sharing}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-party-purple dark:text-party-yellow active:bg-party-purple/10 transition-colors disabled:opacity-50"
+            >
+              <span className="text-lg">{linkCopied ? "✓" : "📤"}</span>
+              <span className="text-[10px] font-semibold">{linkCopied ? t("linkCopied") : t("sharePlan")}</span>
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-zinc-600 dark:text-zinc-400 active:bg-zinc-100 dark:active:bg-zinc-800 transition-colors"
+            >
+              <span className="text-lg">🖨</span>
+              <span className="text-[10px] font-semibold">{t("exportPdf")}</span>
+            </button>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("wizardData");
+                router.push("/wizard");
+              }}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-zinc-600 dark:text-zinc-400 active:bg-zinc-100 dark:active:bg-zinc-800 transition-colors"
+            >
+              <span className="text-lg">✨</span>
+              <span className="text-[10px] font-semibold">{t("newPlan")}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Share URL display */}

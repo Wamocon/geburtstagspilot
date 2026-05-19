@@ -1,8 +1,4 @@
-# HOWTO - Project Setup & Deployment Guide
-
-> 🎉 **Herzlichen Glückwunsch zur Einrichtung! / Congratulations on setting up!**
-> Du kannst dieses Dokument nach Abschluss der Einrichtung löschen oder als Referenz behalten.
-> You can delete this HOWTO document once your setup is complete, or keep it for future reference.
+# Geburtstagspilot - Setup & Deployment Guide
 
 > 📖 **Lies die [AGENTS.md](AGENTS.md) Datei, um GitHub Copilot optimal und produktiv zu nutzen.**
 > **Read the [AGENTS.md](AGENTS.md) file to use GitHub Copilot in an optimised and productive way.**

@@ -1,5 +1,7 @@
 # Geburtstagspilot - UX/UI Todo List
 
+Stand: Mai 2026
+
 ## Status-Legende
 - ✅ Erledigt
 - 🔄 In Arbeit

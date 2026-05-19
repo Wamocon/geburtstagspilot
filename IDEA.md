@@ -1,103 +1,95 @@
 # Projektidee
 
-> Fuell diese Datei aus, bevor du den Skill `anforderungsdokument` aufrufst.
-> Je mehr Details du hier schreibst, desto besser wird das generierte Dokument.
-> Anleitung: `.github/skills/anforderungsdokument/SKILL.md`
+> Diese Datei beschreibt die Kernidee des Projekts Geburtstagspilot.
 
 ---
 
 ## Projektname
 
-[Name der App, z.B. "Universal Inventory Manager"]
+Geburtstagspilot
 
 ---
 
 ## Beschreibung
 
-[Was macht die App? Welches Problem loest sie? Sei konkret.
-
-Beispiel:
-"Eine webbasierte Lagerverwaltungs-App fuer kleine und mittelgrosse Unternehmen in
-Deutschland. Sie ersetzt Excel-basierte Bestandslisten durch ein strukturiertes System
-mit Echtzeit-Uebersicht, QR-Code-Scanfunktion und automatisierten Benachrichtigungen.
-Das Ziel ist es, manuelle Fehler bei der Lagerhaltung um mindestens 80 % zu reduzieren
-und den Zeitaufwand fuer Inventurprozesse auf ein Minimum zu senken."]
+Eine browserbasierte Web-App, die Eltern in unter 5 Minuten einen kompletten
+Kindergeburtstag plant: Zeitablauf, Spiele mit Anleitung, Kuchen- und Essensideen,
+Einkaufsliste, Einladung und Mitgebsel. Kein Account noetig fuer die Basisnutzung,
+sofort Ergebnis. Das Produkt loest ein universelles Elternproblem: die jaehrliche
+Stress-Planung eines Kindergeburtstags. Bisher fragmentiert ueber Pinterest,
+Mama-Blogs, WhatsApp-Gruppen und improvisierte Listen.
 
 ---
 
 ## Zielgruppe
 
-[Wer soll die App nutzen? Branche, Unternehmensgroesse, Rolle.
-
-Beispiel:
-"Lager- und Logistikleiter sowie Mitarbeiter in KMU mit 10 bis 200 Angestellten,
-insbesondere im Einzel-, Gross- und Onlinehandel in Deutschland und dem
-deutschsprachigen Europa."]
+Eltern mit Kindern im Alter von 3 bis 12 Jahren im DACH-Raum. Primaer Muetter
+und Vaeter, die berufstaetig sind und wenig Zeit fuer die Planung haben.
+Sekundaer: Grosseltern, Tanten/Onkel, Tagespflege-Einrichtungen.
 
 ---
 
 ## Kernproblem
 
-[Das konkrete Problem, das OHNE die App besteht.
-
-Beispiel:
-"Lagerfehler durch manuelle Erfassung in Excel kosten KMU durchschnittlich
-14 % des Jahresumsatzes. Bestehende Enterprise-Loesungen wie SAP EWM sind
-fuer kleinere Betriebe zu komplex und zu teuer."]
+Jedes Jahr, jedes Kind, derselbe Stress: Welches Motto? Welche Spiele passen
+zum Alter? Wie viele Wuerstchen fuer 12 Kinder? Was kommt in die Mitgebsel-Tueten?
+Bestehende Angebote sind fragmentiert und nicht interaktiv. Es gibt kein Tool,
+das den gesamten Planungs-Workflow aus einem Guss liefert.
 
 ---
 
 ## Gewuenschte Hauptfunktionen (Version 1)
 
-[Liste der wichtigsten Funktionen. Beispiel:]
-
-- Artikel anlegen, bearbeiten, loeschen
-- Lagerbestand in Echtzeit einsehen
-- QR-Code-Etiketten generieren und scannen
-- Rollenbasierter Zugriff (Admin, Manager, Mitarbeiter)
-- Mehrsprachige Oberflaeche (Deutsch und Englisch)
-- Dashboard mit Bestandsuebersicht
+- 7-Schritt Party-Wizard (Alter, Gaeste, Ort, Motto, Dauer, Allergien, Budget)
+- Automatischer Zeitablauf mit Minutenplan
+- 80+ altersgerechte Spiele mit Anleitung und Material
+- Kuchen-Rezepte und Essensvorschlaege mit Mengenberechnung
+- Automatische Einkaufsliste nach Kategorien
+- Einladungs-Generator mit Themenvorlagen
+- Mitgebsel-Ideen nach Budget-Stufen
+- Gaesteliste-Verwaltung
+- Benutzerkonten mit Free/Pro Modell
+- KI-Features (Chat, Spielgenerierung, Einladungstexte)
+- Admin-Dashboard
 
 ---
 
-## Tech-Stack (optional, wenn bekannt)
+## Tech-Stack
 
-[Bekannte oder gewuenschte Technologien. Standardempfehlung falls leer:
-Next.js, React, TypeScript, Supabase, Tailwind CSS, Vercel]
+Next.js 16, React 19, TypeScript, Supabase, Tailwind CSS v4, Vercel, next-intl, OpenAI
 
 ---
 
 ## Marktsegment und Branche
 
-[In welchem Markt soll die App operieren?
-
-Beispiel: "Lagerverwaltungssoftware (WMS) fuer KMU in Deutschland, Segment Mittelstand"]
+Kindergeburtstags-Planungstools, Eltern-SaaS, Family-Tech im DACH-Raum
 
 ---
 
-## Bekannte Wettbewerber (optional)
+## Bekannte Wettbewerber
 
-[Bestehende Loesungen, die aehnliches tun.
-
-Beispiel: SAP EWM, Sage Wawi, Pickware, Odoo Inventory, Lightspeed]
+- Mama-Blogs (nicht interaktiv)
+- Pinterest-Boards (unstrukturiert)
+- Einzelne Spiele-Sammlungen ohne Planungsfunktion
+- Kein dominanter Anbieter in DACH
 
 ---
 
 ## Ersteller
 
-[Vollstaendiger Name]
+Daniel Moretz
 
 ---
 
 ## Empfaenger (Geschaeftsfuehrung)
 
-[Name und Titel des Entscheidungstraegers, z.B. "waleri moretz, CEO WAMOCON GmbH"]
+Waleri Moretz, CEO WAMOCON GmbH
 
 ---
 
 ## Welle und Version
 
-1
+10
 
 ---
 

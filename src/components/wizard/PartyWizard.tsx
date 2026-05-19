@@ -144,10 +144,10 @@ export function PartyWizard() {
                 >
                   {isDone ? <span className="text-sm font-bold">✓</span> : icon}
                 </div>
-                {/* Connector line */}
+                {/* Connector line - hidden on very small screens */}
                 {i < STEP_ICONS.length - 1 && (
                   <div
-                    className={`absolute top-[18px] sm:top-[20px] left-[calc(50%+18px)] sm:left-[calc(50%+20px)] h-0.5 transition-colors ${
+                    className={`absolute top-[18px] sm:top-[20px] left-[calc(50%+18px)] sm:left-[calc(50%+20px)] h-0.5 transition-colors hidden sm:block ${
                       isDone ? "bg-party-mint/40" : "bg-zinc-200 dark:bg-zinc-700"
                     }`}
                     style={{ width: "calc(100% - 20px)" }}
