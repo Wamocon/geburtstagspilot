@@ -8,6 +8,7 @@ export async function createSupabaseServer() {
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
     {
+      db: { schema: (process.env.SUPABASE_DB_SCHEMA || 'public') as 'public' },
       cookies: {
         getAll() {
           return cookieStore.getAll();
