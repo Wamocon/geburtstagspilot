@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { Theme, WizardData, LocationType, AllergenPreferences } from "@/types";
 import { fetchThemes } from "@/lib/data";
+import { getThemeEmoji, getThemeName } from "@/lib/theme-config";
 
 const AGES = Array.from({ length: 10 }, (_, i) => i + 3);
 const DURATIONS = [1.5, 2, 2.5, 3, 3.5, 4, 5];
@@ -347,9 +348,9 @@ export function PartyWizard() {
                       : "bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-party-purple/10"
                   }`}
                 >
-                  <div className="text-2xl mb-1">{theme.emoji}</div>
+                  <div className="text-2xl mb-1">{getThemeEmoji(theme.slug, theme.emoji)}</div>
                   <div className="text-sm font-semibold">
-                    {locale === "de" ? theme.name_de : theme.name_en}
+                    {getThemeName(theme.slug, locale, theme.name_de, theme.name_en)}
                   </div>
                 </button>
               ))}

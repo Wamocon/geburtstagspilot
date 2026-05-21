@@ -16,6 +16,7 @@ import type {
   GuestEntry,
   AllergenPreferences,
 } from "@/types";
+import { getThemeEmoji, getThemeName } from "@/lib/theme-config";
 import {
   fetchThemes,
   fetchGames,
@@ -292,7 +293,7 @@ export function ResultView() {
       {/* Header */}
       <div className="text-center mb-6">
         <div className="w-16 h-16 rounded-2xl bg-party-purple/10 dark:bg-party-yellow/10 flex items-center justify-center text-3xl mx-auto mb-3">
-          {theme.emoji}
+          {getThemeEmoji(theme.slug, theme.emoji)}
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white mb-1">
           {t("title")}
@@ -303,7 +304,7 @@ export function ResultView() {
           )}
         </h1>
         <p className="text-zinc-500 dark:text-zinc-400">
-          {locale === "de" ? theme.name_de : theme.name_en} -{" "}
+          {getThemeName(theme.slug, locale as "de" | "en", theme.name_de, theme.name_en)} -{" "}
           {t("subtitle", { childAge: wizard.age, guestCount: wizard.guestCount })}
         </p>
 

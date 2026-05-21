@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { InvitationTemplate, Theme, WizardData, GuestEntry, InvitationStyle } from "@/types";
 import { AiGenerateButton } from "@/components/ai/AiGenerateButton";
 import { AiContentBadge } from "@/components/ai/AiContentBadge";
+import { getThemeEmoji } from "@/lib/theme-config";
 
 interface InvitationTabProps {
   invitation: InvitationTemplate | null;
@@ -347,11 +348,11 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
             )}
 
             <div className="relative z-10">
-              <div className="text-4xl mb-4">{invitation.emoji}</div>
+              <div className="text-4xl mb-4">{invitation ? getThemeEmoji(theme.slug, invitation.emoji) : getThemeEmoji(theme.slug, theme.emoji)}</div>
               <div className="whitespace-pre-line text-sm leading-relaxed font-medium">
                 {rendered}
               </div>
-              <div className="mt-4 text-4xl">{theme.emoji}</div>
+              <div className="mt-4 text-4xl">{getThemeEmoji(theme.slug, theme.emoji)}</div>
             </div>
           </div>
 
@@ -389,7 +390,7 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
 
                   // Emoji top
                   ctx.font = "32px serif";
-                  ctx.fillText(invitation.emoji, centerX, 60);
+                  ctx.fillText(getThemeEmoji(theme.slug, invitation?.emoji), centerX, 60);
 
                   // Invitation text
                   ctx.font = "14px sans-serif";
@@ -402,7 +403,7 @@ export function InvitationTab({ invitation, theme, wizard, guests, locale }: Inv
 
                   // Theme emoji
                   ctx.font = "32px serif";
-                  ctx.fillText(theme.emoji, centerX, y + 20);
+                  ctx.fillText(getThemeEmoji(theme.slug, theme.emoji), centerX, y + 20);
 
                   // Download
                   const link = document.createElement("a");

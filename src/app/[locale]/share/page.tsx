@@ -15,6 +15,7 @@ import type {
   GoodieBagItem,
   BudgetTier,
 } from "@/types";
+import { getThemeEmoji, getThemeName } from "@/lib/theme-config";
 import {
   fetchThemes,
   fetchGames,
@@ -136,14 +137,14 @@ export default function SharePage() {
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Hero Header */}
           <div className="text-center py-8 bg-gradient-to-br from-party-purple/10 via-party-yellow/10 to-party-mint/10 dark:from-party-purple/20 dark:via-party-yellow/20 dark:to-party-mint/20 rounded-3xl border border-zinc-200 dark:border-zinc-700">
-            <div className="text-5xl mb-3">{theme.emoji}</div>
+            <div className="text-5xl mb-3">{getThemeEmoji(theme.slug, theme.emoji)}</div>
             <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-white">
               {wizard.birthdayChildName
                 ? `${wizard.birthdayChildName}${locale === "de" ? "s Party" : "'s Party"}`
                 : t("shareTitle")}
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 mt-2">
-              {locale === "de" ? theme.name_de : theme.name_en} - {wizard.guestCount} {locale === "de" ? "Gäste" : "Guests"} - {budgetLabel}
+              {getThemeName(theme.slug, locale as "de" | "en", theme.name_de, theme.name_en)} - {wizard.guestCount} {locale === "de" ? "Gäste" : "Guests"} - {budgetLabel}
             </p>
             <p className="text-xs text-zinc-400 mt-3">{t("shareSubtitle")}</p>
           </div>

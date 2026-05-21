@@ -6,6 +6,7 @@ import { usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserMenu } from "@/components/auth/UserMenu";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { useState, useEffect, useCallback } from "react";
 
 export function Header() {
@@ -13,6 +14,7 @@ export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     function onScroll() {
@@ -34,10 +36,12 @@ export function Header() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  const navLinks = [
-    { href: "/wizard" as const, label: t("nav.wizard"), icon: "🎈" },
-    { href: "/dashboard" as const, label: t("auth.myPlans"), icon: "📋" },
-  ];
+  const navLinks = user
+    ? [
+        { href: "/wizard" as const, label: t("nav.wizard"), icon: "🎈" },
+        { href: "/dashboard" as const, label: t("auth.myPlans"), icon: "📋" },
+      ]
+    : [];
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(href + "/");
@@ -132,13 +136,23 @@ export function Header() {
               <div className="h-px bg-zinc-200 dark:bg-zinc-700 my-4" />
 
               {/* CTA in mobile menu */}
-              <Link
-                href="/wizard"
-                onClick={closeMenu}
-                className="flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-base font-bold bg-party-purple text-white shadow-lg shadow-party-purple/25 active:scale-[0.98] transition-all"
-              >
-                🎈 {t("common.startPlanning")}
-              </Link>
+              {user ? (
+                <Link
+                  href="/wizard"
+                  onClick={closeMenu}
+                  className="flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-base font-bold bg-party-purple text-white shadow-lg shadow-party-purple/25 active:scale-[0.98] transition-all"
+                >
+                  🎈 {t("common.startPlanning")}
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  onClick={closeMenu}
+                  className="flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-base font-bold bg-party-purple text-white shadow-lg shadow-party-purple/25 active:scale-[0.98] transition-all"
+                >
+                  {t("auth.loginNow")}
+                </Link>
+              )}
 
               <div className="h-px bg-zinc-200 dark:bg-zinc-700 my-4" />
 

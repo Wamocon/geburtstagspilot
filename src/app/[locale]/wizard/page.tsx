@@ -1,10 +1,16 @@
+"use client";
+
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PartyWizard } from "@/components/wizard/PartyWizard";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function WizardPage() {
   const t = useTranslations("wizard");
+  const ta = useTranslations("auth");
+  const { user, loading } = useAuth();
 
   return (
     <>
@@ -19,7 +25,29 @@ export default function WizardPage() {
               {t("title")}
             </h1>
           </div>
-          <PartyWizard />
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-8 h-8 border-4 border-party-purple/30 border-t-party-purple rounded-full animate-spin" />
+            </div>
+          ) : user ? (
+            <PartyWizard />
+          ) : (
+            <div className="bg-white dark:bg-zinc-800 rounded-2xl p-8 shadow-lg border border-zinc-100 dark:border-zinc-700 text-center">
+              <div className="text-5xl mb-4">🔒</div>
+              <h2 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">
+                {ta("loginRequiredTitle")}
+              </h2>
+              <p className="text-zinc-500 dark:text-zinc-400 mb-6">
+                {ta("loginRequired")}
+              </p>
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-party-purple text-white hover:bg-party-purple-dark shadow-md shadow-party-purple/20 transition-all"
+              >
+                {ta("loginNow")}
+              </Link>
+            </div>
+          )}
         </div>
       </main>
       <Footer />
