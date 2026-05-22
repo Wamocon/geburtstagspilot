@@ -29,7 +29,7 @@ export function createSupabaseBrowser() {
     SUPABASE_URL,
     SUPABASE_ANON_KEY,
     {
-      db: { schema: (process.env.NEXT_PUBLIC_SUPABASE_DB_SCHEMA || 'public') as 'public' },
+      db: { schema: (process.env.SUPABASE_DB_SCHEMA || 'public') as 'public' },
     }
   );
 }
