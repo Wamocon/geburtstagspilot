@@ -130,7 +130,8 @@
     "guestNamesDesc": "Enter the names of the invited children",
     "addGuest": "Add guest",
     "birthdayChildName": "Birthday child's name",
-    "birthdayChildNamePlaceholder": "What is the birthday child's name?"
+    "birthdayChildNamePlaceholder": "What is the birthday child's name?",
+    "nameRequired": "Please enter the birthday child's name"
   },
   "result": {
     "title": "Your Party Plan",

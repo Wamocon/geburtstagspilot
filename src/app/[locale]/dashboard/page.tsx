@@ -19,6 +19,11 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading || !user) {
+      if (!authLoading) setLoading(false);
+      return;
+    }
+
     async function loadPlans() {
       try {
         const supabase = createSupabaseBrowser();
@@ -34,7 +39,7 @@ function DashboardContent() {
       }
     }
     loadPlans();
-  }, []);
+  }, [authLoading, user]);
 
   async function handleDelete(id: string) {
     setPlans((prev) => prev.filter((p) => p.id !== id));

@@ -32,6 +32,7 @@ import {
 } from "@/lib/plan-generator";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { createSupabaseBrowser } from "@/lib/supabase-browser";
+import { SavePlanButton } from "@/components/dashboard/SavePlanButton";
 import { ScheduleTab } from "./tabs/ScheduleTab";
 import { GamesTab } from "./tabs/GamesTab";
 import { FoodTab } from "./tabs/FoodTab";
@@ -479,6 +480,21 @@ export function ResultView() {
 
       {/* Desktop Actions */}
       <div className="hidden sm:flex flex-wrap gap-3 justify-center mt-6 no-print">
+        <SavePlanButton
+          wizardData={wizard}
+          planData={{
+            wizard,
+            theme,
+            schedule,
+            games,
+            reserveGames,
+            recipe: recipe!,
+            foodItems,
+            shoppingList,
+            invitation: invitation!,
+            goodieBagItems: goodieItems,
+          }}
+        />
         <button
           onClick={handleUpdatePlan}
           className="flex items-center gap-2 px-6 py-3 bg-party-mint text-zinc-900 rounded-full text-sm font-bold hover:bg-party-mint/80 transition-all active:scale-95 shadow-md"
@@ -507,6 +523,25 @@ export function ResultView() {
         >
           ✨ {t("newPlan")}
         </button>
+      </div>
+
+      {/* Mobile Save Plan */}
+      <div className="sm:hidden flex justify-center mt-6 no-print">
+        <SavePlanButton
+          wizardData={wizard}
+          planData={{
+            wizard,
+            theme,
+            schedule,
+            games,
+            reserveGames,
+            recipe: recipe!,
+            foodItems,
+            shoppingList,
+            invitation: invitation!,
+            goodieBagItems: goodieItems,
+          }}
+        />
       </div>
 
       {/* Mobile Sticky Action Bar */}

@@ -31,6 +31,7 @@ export function PartyWizard() {
   const [step, setStep] = useState(1);
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const [wizard, setWizard] = useState<WizardData>({
     age: 6,
@@ -66,6 +67,12 @@ export function PartyWizard() {
   );
 
   function nextStep() {
+    // Validate current step before proceeding
+    if (step === 1 && !wizard.birthdayChildName.trim()) {
+      setValidationError(t("nameRequired"));
+      return;
+    }
+    setValidationError("");
     if (step < TOTAL_STEPS) setStep(step + 1);
   }
 
@@ -187,10 +194,23 @@ export function PartyWizard() {
               <input
                 type="text"
                 value={wizard.birthdayChildName}
-                onChange={(e) => updateWizard({ birthdayChildName: e.target.value })}
+                onChange={(e) => {
+                  updateWizard({ birthdayChildName: e.target.value });
+                  if (validationError && e.target.value.trim()) setValidationError("");
+                }}
                 placeholder={t("birthdayChildNamePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-sm focus:ring-2 focus:ring-party-purple focus:border-transparent transition-all"
+                className={`w-full px-4 py-3 rounded-xl border bg-white dark:bg-zinc-700 text-sm focus:ring-2 focus:ring-party-purple focus:border-transparent transition-all ${
+                  validationError
+                    ? "border-red-400 dark:border-red-500"
+                    : "border-zinc-300 dark:border-zinc-600"
+                }`}
+                required
               />
+              {validationError && (
+                <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">
+                  {validationError}
+                </p>
+              )}
             </div>
 
             <label className="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
