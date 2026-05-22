@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import type { Profile } from "@/types";
-import { createSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowser, isSupabaseReady } from "@/lib/supabase-browser";
 
 interface AuthContextValue {
   user: User | null;
@@ -64,6 +64,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+
+    // Skip Supabase auth entirely when env vars are missing
+    if (!isSupabaseReady()) {
+      setLoading(false);
+      return;
+    }
 
     const {
       data: { subscription },

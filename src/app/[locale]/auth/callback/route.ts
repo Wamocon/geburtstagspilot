@@ -7,12 +7,19 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/dashboard';
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+
+  if (!supabaseUrl || supabaseUrl.includes('placeholder') || !supabaseKey) {
+    return NextResponse.redirect(`${origin}/auth/login?error=config`);
+  }
+
   if (code) {
     try {
       const cookieStore = await cookies();
       const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key',
+        supabaseUrl,
+        supabaseKey,
         {
           cookies: {
             getAll() {

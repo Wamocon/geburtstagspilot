@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
-import { createSupabaseBrowser } from "@/lib/supabase-browser";
+import { createSupabaseBrowser, isSupabaseReady } from "@/lib/supabase-browser";
 
 export function RegisterForm() {
   const t = useTranslations("auth");
@@ -17,6 +17,12 @@ export function RegisterForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (!isSupabaseReady()) {
+      setError("Service is temporarily unavailable. Please try again later.");
+      return;
+    }
+
     setLoading(true);
 
     try {

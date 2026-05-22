@@ -35,6 +35,9 @@ export async function POST(request: Request) {
   let user;
   try {
     const supabase = await createSupabaseServer();
+    if (!supabase) {
+      return NextResponse.json({ error: "SERVICE_UNAVAILABLE" }, { status: 503 });
+    }
     const { data } = await supabase.auth.getUser();
     user = data.user;
     if (!user) {
