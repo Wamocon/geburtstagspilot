@@ -18,7 +18,7 @@ export function LoginForm({ redirect }: { redirect?: string }) {
     setError("");
 
     if (!isSupabaseReady()) {
-      setError("Service is temporarily unavailable. Please try again later.");
+      setError(t("serviceUnavailable"));
       return;
     }
 

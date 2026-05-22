@@ -255,6 +255,7 @@
     "hasAccount": "Already have an account?",
     "loginError": "Email or password incorrect.",
     "registerError": "Registration failed. Please try again.",
+    "serviceUnavailable": "Service is temporarily unavailable. Please try again later.",
     "userMenu": "User menu",
     "myPlans": "My Plans",
     "adminDashboard": "Admin Dashboard",

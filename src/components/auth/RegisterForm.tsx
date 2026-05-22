@@ -19,7 +19,7 @@ export function RegisterForm() {
     setError("");
 
     if (!isSupabaseReady()) {
-      setError("Service is temporarily unavailable. Please try again later.");
+      setError(t("serviceUnavailable"));
       return;
     }
 

@@ -255,6 +255,7 @@
     "hasAccount": "Bereits ein Konto?",
     "loginError": "E-Mail oder Passwort falsch.",
     "registerError": "Registrierung fehlgeschlagen. Versuche es erneut.",
+    "serviceUnavailable": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.",
     "userMenu": "Benutzermenu",
     "myPlans": "Meine Pläne",
     "adminDashboard": "Admin-Dashboard",
