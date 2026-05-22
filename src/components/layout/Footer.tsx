@@ -41,6 +41,11 @@ export function Footer() {
                   📋 {t("auth.myPlans")}
                 </Link>
               </li>
+              <li>
+                <Link href="/handbook" className="text-zinc-500 dark:text-zinc-400 hover:text-party-purple dark:hover:text-party-yellow transition-colors">
+                  📖 {t("nav.handbook")}
+                </Link>
+              </li>
             </ul>
           </div>
 
